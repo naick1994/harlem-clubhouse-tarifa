@@ -41,6 +41,9 @@ body {
 
 img { max-width: 100%; display: block; }
 
+/* the hidden attribute must win over any display rule below */
+[hidden] { display: none !important; }
+
 a { color: inherit; }
 
 h1, h2, h3 {
