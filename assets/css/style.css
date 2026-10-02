@@ -359,7 +359,13 @@ h1, h2, h3 {
 
 .directory { padding: var(--s7) 0; }
 
-.directory__title { font-size: 28px; margin-bottom: var(--s5); }
+.directory__title { font-size: 28px; }
+
+.directory__sub {
+  color: var(--mute);
+  margin-top: var(--s2);
+  margin-bottom: var(--s5);
+}
 
 .partners {
   display: grid;
@@ -435,7 +441,8 @@ h1, h2, h3 {
 
 @media (min-width: 1000px) {
   .directory { padding: var(--s8) 0; }
-  .directory__title { font-size: 40px; margin-bottom: var(--s6); }
+  .directory__title { font-size: 40px; }
+  .directory__sub { margin-bottom: var(--s6); }
   .partners { grid-template-columns: repeat(3, 1fr); }
 }
 
@@ -444,28 +451,68 @@ h1, h2, h3 {
 .mood { padding-bottom: var(--s7); }
 
 .mood__strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 4px;
 }
 
-.mood__item { margin: 0; }
+.mood__item {
+  margin: 0;
+  overflow: hidden;
+  flex: none;
+}
+
+.mood__link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
 .mood__photo {
   width: 100%;
   height: 100%;
-  aspect-ratio: 3 / 2;
   object-fit: cover;
   display: block;
 }
 
-@media (min-width: 700px) {
-  .mood__strip { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s5);
+  background: rgba(6, 23, 28, 0.94);
 }
 
-@media (min-width: 1100px) {
-  .mood__strip { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+.lightbox__photo {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
 }
+
+.lightbox__close {
+  position: absolute;
+  top: var(--s4);
+  right: var(--s4);
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--surface);
+  font: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.lightbox__close:hover { border-color: var(--surface); }
 
 /* ---------------------------------------------------- the ask */
 

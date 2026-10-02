@@ -287,11 +287,15 @@ window.SITE = {
     },
     partners: {
       title: "Tarifa by the Clubhouse",
-      subtitle: "Where we ride, eat and party."
+      subtitle: "Where we ride, train, eat and party."
     },
     dates: {
       days: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    },
+    photos: {
+      close: "Close",
+      openHint: "Open photo"
     },
     footer: {
       line1: "Harlem Clubhouse Tarifa. A home for the kite community.",

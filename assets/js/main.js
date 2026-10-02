@@ -602,6 +602,59 @@
     });
   }
 
+  var MOSAIC_GAP = 4;
+
+  /* A justified photo wall: every row is one height, the widths follow each
+     photograph's own shape, and the last photograph of a row absorbs the
+     rounding, so a row is always exactly as wide as the page. No holes,
+     no two pictures the same size. */
+  function layoutMosaic() {
+    var strip = $("#photos");
+    if (!strip || !strip.clientWidth) return;
+
+    var width = strip.clientWidth;
+    var target = width < 700 ? 104 : (width < 1100 ? 132 : 158);
+    var items = $$(".mood__item", strip).map(function (el) {
+      var w = Number(el.getAttribute("data-w")) || 3;
+      var h = Number(el.getAttribute("data-h")) || 2;
+      return { el: el, aspect: w / h };
+    });
+    if (!items.length) return;
+
+    function place(row) {
+      var available = width - MOSAIC_GAP * (row.length - 1);
+      var sum = 0;
+      row.forEach(function (x) { sum += x.aspect; });
+      var h = Math.max(60, Math.round(available / sum));
+      var used = 0;
+      row.forEach(function (x, i) {
+        var w = i === row.length - 1 ? available - used : Math.floor(h * x.aspect);
+        used += w;
+        x.el.style.width = w + "px";
+        x.el.style.height = h + "px";
+      });
+    }
+
+    var rows = [];
+    var row = [];
+    var sum = 0;
+    items.forEach(function (item) {
+      row.push(item);
+      sum += item.aspect;
+      if (sum * target >= width) { rows.push(row); row = []; sum = 0; }
+    });
+    if (row.length) {
+      // a thin last row would stretch two photographs across the page,
+      // so it goes back into the row above instead
+      if (rows.length && sum * target < width * 0.62) {
+        rows[rows.length - 1] = rows[rows.length - 1].concat(row);
+      } else {
+        rows.push(row);
+      }
+    }
+    rows.forEach(place);
+  }
+
   /* A quiet mosaic of real photographs of the place. */
   function renderPhotos() {
     var host = $("#photos");
@@ -612,14 +665,27 @@
     clear(host);
     photos.forEach(function (p) {
       var figure = node("figure", "mood__item");
+      var link = node("a", "mood__link");
+      link.href = p.src;
+      link.setAttribute("aria-label", text("photos.openHint") || "Open photo");
       var img = lazyImage("mood__photo", p.src, p.alt || "");
-      // the ratio has to be known before the file arrives, or the mosaic
-      // lays itself out against images of zero height and never recovers
-      if (p.w && p.h) { img.width = p.w; img.height = p.h; }
-      figure.appendChild(img);
+      if (p.w && p.h) {
+        img.width = p.w;
+        img.height = p.h;
+        figure.setAttribute("data-w", p.w);
+        figure.setAttribute("data-h", p.h);
+      }
+      link.appendChild(img);
+      figure.appendChild(link);
       host.appendChild(figure);
     });
     section.hidden = false;
+    layoutMosaic();
+    var resizeTimer;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(layoutMosaic, 150);
+    });
   }
 
   /* ----------------------------------------------------- footer */
@@ -695,6 +761,47 @@
     host.appendChild(line);
   }
 
+  /* A photograph opens at full size. Without scripting the link still
+     opens the file on its own. */
+  var lightbox = null;
+  var lastFocus = null;
+
+  function closeLightbox() {
+    if (!lightbox) return;
+    document.body.style.overflow = "";
+    lightbox.parentNode.removeChild(lightbox);
+    lightbox = null;
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  function openLightbox(src, alt) {
+    closeLightbox();
+    lastFocus = document.activeElement;
+    lightbox = node("div", "lightbox");
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("aria-modal", "true");
+
+    var img = node("img", "lightbox__photo");
+    img.src = src;
+    img.alt = alt || "";
+    lightbox.appendChild(img);
+
+    var close = node("button", "lightbox__close", text("photos.close") || "Close");
+    close.type = "button";
+    lightbox.appendChild(close);
+
+    lightbox.addEventListener("click", function (ev) {
+      if (ev.target !== img) closeLightbox();
+    });
+    document.body.appendChild(lightbox);
+    document.body.style.overflow = "hidden";
+    close.focus();
+  }
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") closeLightbox();
+  });
+
   /* ----------------------------------------------------- click handling */
 
   function initClicks() {
@@ -702,6 +809,12 @@
       var a = ev.target && ev.target.closest ? ev.target.closest("a") : null;
       if (!a) return;
       if (a.getAttribute("data-unset") === "true") { ev.preventDefault(); return; }
+      if (a.className === "mood__link") {
+        ev.preventDefault();
+        var photo = a.querySelector("img");
+        openLightbox(a.getAttribute("href"), photo ? photo.alt : "");
+        return;
+      }
       var cta = a.getAttribute("data-track-cta");
       if (cta) track(cta === "instagram" ? "Follow Instagram" : "Join WhatsApp");
       var slug = a.getAttribute("data-partner");
