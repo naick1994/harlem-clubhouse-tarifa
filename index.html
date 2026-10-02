@@ -23,132 +23,134 @@
 <meta name="twitter:description" content="Live webcam and wind from Balneario Beach Club, Tarifa. Check the conditions, join the family, ride together.">
 <meta name="twitter:image" content="https://harlem.clubhousetarifa.com/assets/img/og-image.jpg">
 
-<meta name="theme-color" content="#00C1B0">
+<meta name="theme-color" content="#0B2B33">
 <link rel="icon" href="assets/img/favicon.png" sizes="32x32">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
 <link rel="stylesheet" href="assets/css/style.css">
+<link rel="preload" as="image" href="assets/img/cam-poster-1600.jpg" imagesrcset="assets/img/cam-poster-900.jpg 900w, assets/img/cam-poster-1600.jpg 1600w" imagesizes="100vw">
 
 <script src="assets/js/config.js" defer></script>
 <script src="assets/js/main.js" defer></script>
 </head>
 <body>
 
-<header class="header">
-  <div class="wrap header__inner">
-    <div class="header__lockup">
-      <a class="header__brand" href="/" aria-label="Harlem Clubhouse Tarifa">
-        <img class="header__logo" data-logo src="assets/img/logo-clubhouse.png" width="680" height="187"
-             alt="Harlem Clubhouse Tarifa" data-copy-alt="header.logoAlt">
-      </a>
-      <span class="header__sep" id="venue-sep" hidden aria-hidden="true"></span>
-      <a class="header__venue" id="venue" hidden></a>
-    </div>
-    <a class="header__social" data-link="instagram" target="_blank" rel="noopener"
-       aria-label="Instagram" data-copy-aria="header.instagram">
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
-        <path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.4.4.7.8.9 1.4.17.4.37 1 .42 2.2.06 1.3.07 1.7.07 4.9s0 3.6-.07 4.9c-.05 1.2-.25 1.8-.42 2.2-.22.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.17-1 .37-2.2.42-1.3.06-1.7.07-4.9.07s-3.6 0-4.9-.07c-1.2-.05-1.8-.25-2.2-.42-.6-.22-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.17-.4-.37-1-.42-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.07-4.9c.05-1.2.25-1.8.42-2.2.22-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.17 1-.37 2.2-.42C8.4 2.2 8.8 2.2 12 2.2m0 2.1c-3.1 0-3.5 0-4.7.07-1.1.05-1.7.24-2.1.4-.5.2-.9.44-1.3.84-.4.4-.64.8-.84 1.3-.16.4-.35 1-.4 2.1-.06 1.2-.07 1.6-.07 4.7s0 3.5.07 4.7c.05 1.1.24 1.7.4 2.1.2.5.44.9.84 1.3.4.4.8.64 1.3.84.4.16 1 .35 2.1.4 1.2.06 1.6.07 4.7.07s3.5 0 4.7-.07c1.1-.05 1.7-.24 2.1-.4.5-.2.9-.44 1.3-.84.4-.4.64-.8.84-1.3.16-.4.35-1 .4-2.1.06-1.2.07-1.6.07-4.7s0-3.5-.07-4.7c-.05-1.1-.24-1.7-.4-2.1-.2-.5-.44-.9-.84-1.3-.4-.4-.8-.64-1.3-.84-.4-.16-1-.35-2.1-.4-1.2-.06-1.6-.07-4.7-.07z"/>
-        <path fill="currentColor" d="M12 7.2a4.8 4.8 0 1 0 0 9.6 4.8 4.8 0 0 0 0-9.6m0 7.9a3.1 3.1 0 1 1 0-6.2 3.1 3.1 0 0 1 0 6.2z"/>
-        <circle fill="currentColor" cx="17" cy="7" r="1.1"/>
-      </svg>
+<header class="masthead">
+  <div class="shell masthead__row">
+    <a class="masthead__brand" href="/" aria-label="Harlem Clubhouse Tarifa">
+      <img class="masthead__logo" data-logo src="assets/img/logo-clubhouse.png" width="680" height="187"
+           alt="Harlem Clubhouse Tarifa" data-copy-alt="header.logoAlt">
     </a>
+    <span class="masthead__rule" id="venue-sep" hidden aria-hidden="true"></span>
+    <a class="masthead__venue" id="venue" hidden></a>
   </div>
 </header>
 
 <main>
 
-  <!-- 1. Webcam -->
-  <section class="cam" aria-labelledby="cam-heading">
-    <h2 class="visually-hidden" id="cam-heading" data-copy="webcam.frameTitle">Live webcam</h2>
-    <div class="wrap">
-      <div class="cam__bar">
-        <p class="cam__place" id="cam-place"></p>
-        <p class="cam__status" id="cam-status">
-          <span class="cam__dot" aria-hidden="true"></span>
-          <span id="cam-status-text"></span>
+  <!-- the screen: the webcam lives in here -->
+  <section class="window" aria-labelledby="window-title">
+    <div class="shell">
+      <h1 class="u-hidden" id="window-title" data-copy="webcam.frameTitle">Live webcam, Balneario Beach Club, Tarifa</h1>
+      <div class="window__bar">
+        <p class="window__place" id="cam-place"></p>
+        <p class="window__status">
+          <span class="window__dot" aria-hidden="true"></span>
+          <span class="window__state" id="cam-status-text"></span>
         </p>
       </div>
-      <div class="cam__frame" id="cam-frame" data-state="soon"></div>
+      <div class="window__frame">
+        <div class="window__media" id="cam-frame" data-state="soon"></div>
+        <div class="window__overlay">
+          <div class="window__message" id="cam-note" hidden></div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 2. Wind now -->
-  <section class="wind" id="section-wind" aria-labelledby="wind-heading">
-    <div class="wrap">
-      <h2 class="section__label" id="wind-heading" data-copy="wind.title">Wind now</h2>
+  <!-- the instrument -->
+  <section class="wind" id="section-wind" aria-labelledby="wind-title">
+    <h2 class="u-hidden" id="wind-title" data-copy="wind.title">Wind now</h2>
+    <div class="shell">
       <div id="wind-embed" hidden></div>
-      <div class="wind__data" id="wind-data" hidden>
-        <p class="wind__speed">
-          <span id="wind-knots">0</span><span class="wind__unit" data-copy="wind.unit">kn</span>
-        </p>
-        <div class="wind__meta">
-          <p class="wind__gusts">
-            <span data-copy="wind.gusts">Gusts</span>
-            <strong><span id="wind-gusts">0</span><span data-copy="wind.unit">kn</span></strong>
-          </p>
-          <p class="wind__direction" id="wind-direction">
-            <svg class="wind__arrow" id="wind-arrow" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
-              <path fill="currentColor" d="M12 2 19 21l-7-5-7 5z"/>
-            </svg>
-            <span id="wind-cardinal">N</span>
-            <span class="wind__name" id="wind-name" hidden></span>
-          </p>
-        </div>
-      </div>
-      <p class="wind__note">
+      <p class="instrument" id="wind-data" hidden>
+        <span class="instrument__value" id="wind-knots">0</span>
+        <span class="instrument__unit">knots</span>
+        <span class="instrument__item">
+          <span class="instrument__label" data-copy="wind.gusts">gusts</span>
+          <span id="wind-gusts">0</span>
+        </span>
+        <span class="instrument__item" id="wind-direction">
+          <svg class="rose" viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" focusable="false">
+            <circle cx="20" cy="20" r="15.5" fill="none" stroke="currentColor" stroke-width="1" opacity=".35"/>
+            <line x1="20" y1="1.5" x2="20" y2="5.5" stroke="currentColor" stroke-width="1" opacity=".35"/>
+            <g id="wind-rose-needle">
+              <line x1="20" y1="20" x2="20" y2="5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </g>
+          </svg>
+          <span id="wind-cardinal">N</span>
+          <span class="instrument__degrees" id="wind-degrees"></span>
+        </span>
+        <span class="instrument__item instrument__name" id="wind-name" hidden></span>
+      </p>
+      <p class="instrument__note">
         <span data-copy="wind.note">Model data, not a station.</span>
         <span id="wind-forecast" hidden></span>
       </p>
     </div>
   </section>
 
-  <!-- 3. Join the family -->
-  <section class="join" id="section-join" aria-labelledby="join-heading">
-    <div class="wrap join__inner">
-      <h2 class="join__title" id="join-heading" data-copy="join.title">Join the family.</h2>
-      <p class="join__text" data-copy="join.text">Sessions, events, challenges and wind calls. All in one WhatsApp group.</p>
-      <a class="btn btn--primary btn--big" data-cta target="_blank" rel="noopener">Follow on Instagram</a>
-      <a class="link link--muted" data-link="instagram" target="_blank" rel="noopener"
-         data-copy="join.secondary">Follow @harlemclubhouse.tarifa</a>
+  <!-- next up -->
+  <section class="next" id="section-next" aria-labelledby="next-title">
+    <div class="shell next__row">
+      <h2 class="next__label" id="next-title" data-copy="events.title">Next up</h2>
+      <div class="next__body" id="event"></div>
     </div>
   </section>
 
-  <!-- 4. Next up -->
-  <section class="next" id="section-next" aria-labelledby="next-heading">
-    <div class="wrap">
-      <h2 class="section__label" id="next-heading" data-copy="events.title">Next up</h2>
-      <div id="event"></div>
-    </div>
-  </section>
-
-  <!-- 5. Partners -->
-  <section class="tarifa" id="section-partners" aria-labelledby="tarifa-heading">
-    <div class="wrap">
-      <div class="section__head">
-        <h2 class="section__title" id="tarifa-heading" data-copy="partners.title">Tarifa by the Clubhouse</h2>
-        <p class="section__sub" data-copy="partners.subtitle">Where we ride, eat and party.</p>
-      </div>
+  <!-- the directory -->
+  <section class="directory" id="section-partners" aria-labelledby="directory-title">
+    <div class="shell">
+      <h2 class="directory__title" id="directory-title" data-copy="partners.title">Tarifa by the Clubhouse</h2>
       <div class="partners" id="partners"></div>
+    </div>
+  </section>
+
+  <!-- mood -->
+  <section class="mood" id="section-photos" hidden>
+    <div class="mood__strip" id="photos"></div>
+  </section>
+
+  <!-- the ask -->
+  <section class="join" id="section-join" aria-labelledby="join-title">
+    <div class="shell join__row">
+      <div class="join__text">
+        <h2 class="join__title" id="join-title" data-copy="join.title">Join the family.</h2>
+        <p data-copy="join.text">Sessions, events, challenges and wind calls. All in one WhatsApp group.</p>
+      </div>
+      <div class="join__actions">
+        <a class="button" data-cta target="_blank" rel="noopener">Follow on Instagram</a>
+        <a class="link" data-link="instagram" target="_blank" rel="noopener"
+           data-copy="join.secondary">Follow @harlemclubhouse.tarifa</a>
+      </div>
     </div>
   </section>
 
 </main>
 
 <footer class="footer">
-  <div class="wrap footer__inner">
-    <div class="footer__brand-block">
-    <img class="footer__logo" src="assets/img/logo-clubhouse-white.png" width="680" height="187"
-         alt="Harlem Clubhouse Tarifa" data-copy-alt="header.logoAlt" loading="lazy" decoding="async">
-    <p class="footer__line" data-copy="footer.line1">Harlem Clubhouse Tarifa. A home for the kite community.</p>
-    <p class="footer__tagline" data-copy="footer.line2">Change the tide.</p>
+  <div class="shell footer__grid">
+    <div class="footer__identity">
+      <img class="footer__logo" src="assets/img/logo-clubhouse-white.png" width="680" height="187"
+           alt="Harlem Clubhouse Tarifa" data-copy-alt="header.logoAlt" loading="lazy" decoding="async">
+      <p class="footer__line" data-copy="footer.line1">Harlem Clubhouse Tarifa. A home for the kite community.</p>
     </div>
-    <div class="footer__links">
+    <p class="footer__tagline" data-copy="footer.line2">Change the tide.</p>
     <nav class="footer__brands" id="footer-brands" aria-label="Brands"></nav>
     <div class="sponsor" id="sponsor"></div>
-    </div>
     <p class="footer__notice">
       <span data-copy="footer.notice">Live panoramic view. Nothing is recorded.</span>
       <a class="link link--quiet" id="footer-privacy" href="privacy.html" data-copy="footer.privacy" hidden>Privacy</a>

@@ -204,7 +204,7 @@
     var host = $("#venue");
     var sep = $("#venue-sep");
     if (!host || !v.logo) return;
-    var img = node("img", "header__venue-logo");
+    var img = node("img", "masthead__venue-logo");
     img.src = v.logo;
     img.alt = v.name || "";
     img.width = 180;
@@ -383,18 +383,39 @@
     hls.on(window.Hls.Events.MANIFEST_PARSED, start);
   }
 
-  function camCard(title, body, withButton, event) {
-    var card = node("div", "cam__card");
-    card.appendChild(node("h2", "cam__title", title));
-    card.appendChild(node("p", "cam__text", body));
+  /* The window shows a photograph of the spot while there is no video. */
+  function camPoster() {
+    var src = (S.webcam || {}).poster;
+    if (!src) return null;
+    var img = lazyImage("window__photo", src, "");
+    img.loading = "eager";
+    img.setAttribute("srcset", "assets/img/cam-poster-900.jpg 900w, " + src + " 1600w");
+    img.setAttribute("sizes", "100vw");
+    img.alt = "";
+    return img;
+  }
+
+  /* The message under the window, left aligned like the rest of the page. */
+  function renderNote(state) {
+    var row = $("#cam-note");
+    if (!row) return;
+    clear(row);
+    if (state === "live") { row.hidden = true; return; }
+
+    var title = state === "offline" ? text("webcam.offlineTitle") : text("webcam.soonTitle");
+    var body = state === "offline" ? text("webcam.offlineText") : text("webcam.soonText");
+    row.appendChild(node("h2", "window__title", title));
+    row.appendChild(node("p", "window__text", body));
+
+    var event = state === "offline" ? nextEvent() : null;
     if (event) {
-      var line = node("p", "cam__next");
-      line.appendChild(node("span", "cam__next-date", eventDateLabel(event)));
-      line.appendChild(node("span", "cam__next-title", event.title || ""));
-      card.appendChild(line);
+      var line = node("p", "window__next");
+      line.appendChild(node("span", "window__next-date", eventDateLabel(event)));
+      line.appendChild(node("span", "window__next-title", event.title || ""));
+      row.appendChild(line);
     }
-    if (withButton) card.appendChild(ctaLink("btn btn--primary"));
-    return card;
+    row.appendChild(ctaLink("button"));
+    row.hidden = false;
   }
 
   var currentCamState = null;
@@ -410,19 +431,18 @@
     clear(frame);
     frame.setAttribute("data-state", state);
 
-    var band = $(".cam");
+    var band = $(".window");
     if (band) band.setAttribute("data-cam", state);
     var place = $("#cam-place");
     if (place) place.textContent = (S.location || {}).name || "";
     var status = $("#cam-status-text");
     if (status) status.textContent = text(STATUS[state]);
 
-    if (state === "soon") {
-      frame.appendChild(camCard(text("webcam.soonTitle"), text("webcam.soonText"), true, null));
-      return;
-    }
-    if (state === "offline") {
-      frame.appendChild(camCard(text("webcam.offlineTitle"), text("webcam.offlineText"), false, nextEvent()));
+    renderNote(state);
+
+    if (state !== "live") {
+      var poster = camPoster();
+      if (poster) frame.appendChild(poster);
       return;
     }
 
@@ -489,10 +509,12 @@
     $("#wind-gusts").textContent = String(Math.round(c.wind_gusts_10m || 0));
     $("#wind-cardinal").textContent = cardinal(deg);
 
-    var arrow = $("#wind-arrow");
-    arrow.style.transform = "rotate(" + (deg + 180) + "deg)";
+    var needle = $("#wind-rose-needle");
+    if (needle) needle.setAttribute("transform", "rotate(" + Math.round(deg) + " 20 20)");
+    var degrees = $("#wind-degrees");
+    if (degrees) degrees.textContent = Math.round(deg) + "\u00B0";
     var dir = $("#wind-direction");
-    dir.setAttribute("aria-label", text("wind.directionPrefix") + " " + cardinal(deg));
+    dir.setAttribute("aria-label", text("wind.directionPrefix") + " " + cardinal(deg) + ", " + Math.round(deg) + " degrees");
 
     var name = $("#wind-name");
     var label = windName(deg);
@@ -563,7 +585,6 @@
       if (p.logo) {
         var img = lazyImage("partner__logo", p.logo, p.name);
         mark.appendChild(img);
-        // a logo that fails to load must not leave an empty hole
         img.addEventListener("error", function () {
           mark.className = "partner__mark";
           mark.replaceChild(node("span", "partner__initials", initials(p.name)), img);
@@ -580,6 +601,26 @@
 
       host.appendChild(card);
     });
+  }
+
+  /* A quiet mosaic of real photographs of the place. */
+  function renderPhotos() {
+    var host = $("#photos");
+    var section = $("#section-photos");
+    if (!host || !section) return;
+    var photos = (S.photos || []).filter(function (p) { return p && p.src; });
+    if (!photos.length) return;
+    clear(host);
+    photos.forEach(function (p) {
+      var figure = node("figure", "mood__item");
+      var img = lazyImage("mood__photo", p.src, p.alt || "");
+      // the ratio has to be known before the file arrives, or the mosaic
+      // lays itself out against images of zero height and never recovers
+      if (p.w && p.h) { img.width = p.w; img.height = p.h; }
+      figure.appendChild(img);
+      host.appendChild(figure);
+    });
+    section.hidden = false;
   }
 
   /* ----------------------------------------------------- footer */
@@ -682,6 +723,7 @@
     if (sectionOn("wind")) renderWind();
     if (sectionOn("events")) renderEvent();
     if (sectionOn("partners")) renderPartners();
+    renderPhotos();
     renderTagline();
     renderPrivacy();
     renderFooterBrands();

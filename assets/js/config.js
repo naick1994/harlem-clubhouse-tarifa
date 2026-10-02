@@ -71,6 +71,7 @@ window.SITE = {
     youtubeVideoId: "",          // alternative to the channel id
     iframeUrl: "",               // generic embed url from a webcam service
     hlsUrl: "",                  // .m3u8 stream
+    poster: "assets/img/cam-poster-1600.jpg",   // the photo the window shows while there is no video
     liveHours: { start: "07:30", end: "21:30", timezone: "Europe/Madrid" }
   },
 
@@ -100,7 +101,7 @@ window.SITE = {
   ],
 
   /* ---------- 8. PARTNERS ----------
-     category is a short label: Ride, Gear & Rental, Eat, Night, Train, Travel, Compete
+     category is a short label: Ride, Gear Rent & Buy, Eat, Night, Train, Travel, Compete
      perk is optional, leave "" to show nothing.
      Never write a perk or a discount code you have not agreed with the partner.
      logo: path to a file in assets/img/, leave "" for the text badge. */
@@ -117,8 +118,8 @@ window.SITE = {
     {
       slug: "lorenzo-casati-shop",
       name: "Lorenzo Casati Shop",
-      category: "Gear & Rental",
-      description: "Test, rent and talk gear in Tarifa.",
+      category: "Gear, Rent & Buy",
+      description: "Test, rent and buy gear in Tarifa.",
       perk: "",                                                    // TODO: confirm the perk with the shop before showing it
       url: "https://shop.lorenzocasati.com/",
       logo: "assets/img/partners/lorenzo-casati-shop.png"
@@ -188,6 +189,38 @@ window.SITE = {
     }
   ],
 
+  /* ---------- 8b. PHOTOS ----------
+     A quiet strip of real photos near the bottom. Drop files in
+     assets/img/photos/ and list them here. Empty array hides the band. */
+  photos: [
+    { src: "assets/img/photos/clubhouse-01.jpg", alt: "The Clubhouse seen from the sand, kite in the air", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-02.jpg", alt: "A rider with a glass of rose at the Clubhouse", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-03.jpg", alt: "Balneario lanyards on a table", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-04.jpg", alt: "The crew at a table facing the water", w: 900, h: 671 },
+    { src: "assets/img/photos/clubhouse-05.jpg", alt: "Walking the kite down the beach", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-06.jpg", alt: "The Clubhouse from the beach path", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-07.jpg", alt: "Two of the crew on the terrace", w: 600, h: 900 },
+    { src: "assets/img/photos/clubhouse-08.jpg", alt: "Board, bag and shirt on the bar", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-09.jpg", alt: "Glasses raised at the Clubhouse", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-10.jpg", alt: "Harlem flag beside the Balneario sign", w: 600, h: 900 },
+    { src: "assets/img/photos/clubhouse-11.jpg", alt: "The terrace with the Clubhouse banners", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-12.jpg", alt: "A rider still in the wetsuit, glass in hand", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-13.jpg", alt: "A cold beer at the bar", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-14.jpg", alt: "The room watching the session", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-15.jpg", alt: "Kites laid out on the sand", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-16.jpg", alt: "Faces of the Clubhouse", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-17.jpg", alt: "A board waiting by the window", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-18.jpg", alt: "Talking at the bar", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-19.jpg", alt: "The Balneario sign above Los Lances", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-20.jpg", alt: "Hoodies at the door of the beach club", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-21.jpg", alt: "Gear and a quiet moment on the deck", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-22.jpg", alt: "The crowd at the Clubhouse", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-23.jpg", alt: "Harlem flag on the dune", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-24.jpg", alt: "A seat in the sun after the session", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-25.jpg", alt: "The DJ and the kit behind the bar", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-26.jpg", alt: "Two riders toasting after the session", w: 900, h: 600 }
+  ],
+
   /* ---------- 9. FOOTER BRANDS ---------- */
   footer: {
     privacyUrl: "",                                                // set to "privacy.html" to show the privacy link in the footer again
@@ -232,9 +265,9 @@ window.SITE = {
     wind: {
       title: "Wind now",
       unit: "kn",
-      gusts: "Gusts",
+      gusts: "gusts",
       note: "Model data, not a station.",
-      forecastLabel: "Full forecast:",
+      forecastLabel: "Full forecast",
       windguru: "Windguru",
       windfinder: "Windfinder",
       levante: "Levante",
