@@ -491,8 +491,7 @@
     if (!items.length) { host.hidden = true; return; }
     host.hidden = false;
     host.appendChild(document.createTextNode(text("wind.forecastLabel") + " "));
-    items.forEach(function (item, i) {
-      if (i) host.appendChild(document.createTextNode(" · "));
+    items.forEach(function (item) {
       var a = outbound(item.url, item.id);
       a.className = "link";
       a.textContent = item.label;
