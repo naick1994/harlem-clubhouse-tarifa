@@ -10,8 +10,8 @@ window.SITE = {
 
   /* ---------- 1. SITE ---------- */
   site: {
-    title: "Tarifa Live Webcam | Harlem Clubhouse Tarifa",
-    description: "Live webcam and wind from Balneario Beach Club, Tarifa. Check the conditions, join the crew, ride together."
+    title: "Balneario Live Webcam | Harlem Clubhouse Tarifa",
+    description: "Live webcam and wind from Balneario Beach Club, Tarifa. Check the conditions, join the family, ride together."
   },
 
   /* ---------- 2. LINKS ---------- */

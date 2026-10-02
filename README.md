@@ -1,6 +1,6 @@
 # Harlem Clubhouse Tarifa
 
-Live webcam, wind and crew page for Harlem Clubhouse Tarifa at Balneario Beach Club.
+Live webcam, wind and community page for Harlem Clubhouse Tarifa at Balneario Beach Club.
 
 Plain HTML, CSS and JavaScript. No build step, no npm, no framework.
 **Everything you edit lives in one file: `assets/js/config.js`.**
@@ -64,7 +64,7 @@ The Harlem card never carries a discount code.
 ### Show or hide a whole section
 
 While the webcam is not installed, the site shows only the cam card. Wind,
-Join the crew, Next up and the partner cards are switched off in `sections`.
+Join the family, Next up and the partner cards are switched off in `sections`.
 Nothing was deleted. Set one to `true` and it comes back exactly as it was:
 
 ```js
