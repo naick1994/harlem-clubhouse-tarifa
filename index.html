@@ -61,10 +61,13 @@
   <section class="cam" aria-labelledby="cam-heading">
     <h2 class="visually-hidden" id="cam-heading" data-copy="webcam.frameTitle">Live webcam</h2>
     <div class="wrap">
-      <p class="cam__badge" id="cam-badge" hidden>
-        <span class="cam__dot" aria-hidden="true"></span>
-        <span data-copy="webcam.liveLabel">LIVE · Balneario Beach Club, Tarifa</span>
-      </p>
+      <div class="cam__bar">
+        <p class="cam__place" id="cam-place"></p>
+        <p class="cam__status" id="cam-status">
+          <span class="cam__dot" aria-hidden="true"></span>
+          <span id="cam-status-text"></span>
+        </p>
+      </div>
       <div class="cam__frame" id="cam-frame" data-state="soon"></div>
     </div>
   </section>
@@ -102,7 +105,7 @@
   <!-- 3. Join the crew -->
   <section class="join" id="section-join" aria-labelledby="join-heading">
     <div class="wrap join__inner">
-      <h2 class="join__title" id="join-heading" data-copy="join.title">Join the crew.</h2>
+      <h2 class="join__title" id="join-heading" data-copy="join.title">Join the family.</h2>
       <p class="join__text" data-copy="join.text">Sessions, events, challenges and wind calls. All in one WhatsApp group.</p>
       <a class="btn btn--primary btn--big" data-cta target="_blank" rel="noopener">Follow on Instagram</a>
       <a class="link link--muted" data-link="instagram" target="_blank" rel="noopener"
@@ -121,8 +124,10 @@
   <!-- 5. Partners -->
   <section class="tarifa" id="section-partners" aria-labelledby="tarifa-heading">
     <div class="wrap">
-      <h2 class="section__title" id="tarifa-heading" data-copy="partners.title">Tarifa by the Clubhouse</h2>
-      <p class="section__sub" data-copy="partners.subtitle">Where we ride, eat and party.</p>
+      <div class="section__head">
+        <h2 class="section__title" id="tarifa-heading" data-copy="partners.title">Tarifa by the Clubhouse</h2>
+        <p class="section__sub" data-copy="partners.subtitle">Where we ride, eat and party.</p>
+      </div>
       <div class="partners" id="partners"></div>
     </div>
   </section>
@@ -130,16 +135,20 @@
 </main>
 
 <footer class="footer">
-  <div class="wrap">
+  <div class="wrap footer__inner">
+    <div class="footer__brand-block">
     <img class="footer__logo" src="assets/img/logo-clubhouse-white.png" width="680" height="187"
          alt="Harlem Clubhouse Tarifa" data-copy-alt="header.logoAlt" loading="lazy" decoding="async">
-    <p class="footer__line" data-copy="footer.line1">Harlem Clubhouse Tarifa. A home for the community.</p>
+    <p class="footer__line" data-copy="footer.line1">Harlem Clubhouse Tarifa. A home for the kite community.</p>
     <p class="footer__tagline" data-copy="footer.line2">Change the tide.</p>
+    </div>
+    <div class="footer__links">
     <nav class="footer__brands" id="footer-brands" aria-label="Brands"></nav>
     <div class="sponsor" id="sponsor"></div>
+    </div>
     <p class="footer__notice">
       <span data-copy="footer.notice">Live panoramic view. Nothing is recorded.</span>
-      <a class="link link--quiet" href="privacy.html" data-copy="footer.privacy">Privacy</a>
+      <a class="link link--quiet" id="footer-privacy" href="privacy.html" data-copy="footer.privacy" hidden>Privacy</a>
     </p>
   </div>
 </footer>

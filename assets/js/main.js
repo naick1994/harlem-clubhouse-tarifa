@@ -97,6 +97,17 @@
     return (S.sections || {})[name] !== false;
   }
 
+  /* In Chrome the loading attribute has to be set before src, or a lazy
+     image is never fetched at all. Always build lazy images here. */
+  function lazyImage(cls, src, alt) {
+    var img = node("img", cls);
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.src = src;
+    img.alt = alt || "";
+    return img;
+  }
+
   function clear(el) { while (el && el.firstChild) el.removeChild(el.firstChild); }
 
   /* Current wall clock in a given timezone, as plain strings. */
@@ -266,12 +277,7 @@
 
     var card = node("article", "card event");
     if (e.image) {
-      var img = node("img", "event__image");
-      img.src = e.image;
-      img.alt = e.title || "";
-      img.loading = "lazy";
-      img.decoding = "async";
-      card.appendChild(img);
+      card.appendChild(lazyImage("event__image", e.image, e.title || ""));
     }
     var body = node("div", "event__body");
     var meta = node("p", "event__meta");
@@ -393,16 +399,23 @@
 
   var currentCamState = null;
 
+  var STATUS = { live: "webcam.statusLive", offline: "webcam.statusSleeping", soon: "webcam.statusSoon" };
+
   function renderCam(force) {
     var frame = $("#cam-frame");
-    var badge = $("#cam-badge");
     if (!frame) return;
     var state = camState();
     if (!force && state === currentCamState) return;
     currentCamState = state;
     clear(frame);
-    if (badge) badge.hidden = state !== "live";
     frame.setAttribute("data-state", state);
+
+    var band = $(".cam");
+    if (band) band.setAttribute("data-cam", state);
+    var place = $("#cam-place");
+    if (place) place.textContent = (S.location || {}).name || "";
+    var status = $("#cam-status-text");
+    if (status) status.textContent = text(STATUS[state]);
 
     if (state === "soon") {
       frame.appendChild(camCard(text("webcam.soonTitle"), text("webcam.soonText"), true, null));
@@ -546,14 +559,15 @@
       card.className = "partner";
       card.setAttribute("data-partner", p.slug || "");
 
-      var mark = node("div", "partner__mark");
+      var mark = node("div", "partner__mark" + (p.logo ? " partner__mark--logo" : ""));
       if (p.logo) {
-        var img = node("img", "partner__logo");
-        img.src = p.logo;
-        img.alt = p.name;
-        img.loading = "lazy";
-        img.decoding = "async";
+        var img = lazyImage("partner__logo", p.logo, p.name);
         mark.appendChild(img);
+        // a logo that fails to load must not leave an empty hole
+        img.addEventListener("error", function () {
+          mark.className = "partner__mark";
+          mark.replaceChild(node("span", "partner__initials", initials(p.name)), img);
+        });
       } else {
         mark.appendChild(node("span", "partner__initials", initials(p.name)));
       }
@@ -570,10 +584,33 @@
 
   /* ----------------------------------------------------- footer */
 
+  /* The motto is a logo when there is one, the words when there is not. */
+  function renderTagline() {
+    var src = (S.footer || {}).taglineLogo;
+    var host = $(".footer__tagline");
+    if (!host || !src) return;
+    var img = lazyImage("footer__tagline-logo", src, text("footer.line2"));
+    img.addEventListener("error", function () { host.classList.remove("footer__tagline--logo"); });
+    host.textContent = "";
+    host.classList.add("footer__tagline--logo");
+    host.appendChild(img);
+  }
+
+  function renderPrivacy() {
+    var link = $("#footer-privacy");
+    if (!link) return;
+    var url = (S.footer || {}).privacyUrl;
+    if (!url) return;
+    link.href = url;
+    link.hidden = false;
+  }
+
   function renderFooterBrands() {
     var host = $("#footer-brands");
     if (!host) return;
     clear(host);
+    var brands = (S.footer || {}).brands || [];
+    host.hidden = !brands.length;
     ((S.footer || {}).brands || []).forEach(function (b) {
       if (!b || !b.name) return;
       if (isUrl(b.url)) {
@@ -598,12 +635,7 @@
       var holder = isUrl(s.url) ? outbound(s.url, "sponsor_" + (s.slug || s.name)) : node("span");
       holder.className = "sponsor__link";
       if (s.logo) {
-        var img = node("img", "sponsor__logo");
-        img.src = s.logo;
-        img.alt = s.name;
-        img.loading = "lazy";
-        img.decoding = "async";
-        holder.appendChild(img);
+        holder.appendChild(lazyImage("sponsor__logo", s.logo, s.name));
       } else {
         holder.appendChild(node("span", "sponsor__name", s.name));
       }
@@ -650,6 +682,8 @@
     if (sectionOn("wind")) renderWind();
     if (sectionOn("events")) renderEvent();
     if (sectionOn("partners")) renderPartners();
+    renderTagline();
+    renderPrivacy();
     renderFooterBrands();
     renderSponsor();
     initClicks();

@@ -45,7 +45,7 @@ window.SITE = {
     wind: false,
     join: false,
     events: false,
-    partners: false
+    partners: true
   },
 
   /* ---------- 3. LOCATION (used by the wind) ---------- */
@@ -100,7 +100,7 @@ window.SITE = {
   ],
 
   /* ---------- 8. PARTNERS ----------
-     category must be one of: Ride, Gear & Rental, Eat, Night, Compete
+     category is a short label: Ride, Gear & Rental, Eat, Night, Train, Travel, Compete
      perk is optional, leave "" to show nothing.
      Never write a perk or a discount code you have not agreed with the partner.
      logo: path to a file in assets/img/, leave "" for the text badge. */
@@ -112,7 +112,7 @@ window.SITE = {
       description: "The gear we ride.",
       perk: "",                                                    // keep empty, no discount code on the Harlem card
       url: "https://harlemkitesurfing.com",
-      logo: ""                                                     // TODO: add assets/img/partner-harlem.png
+      logo: "assets/img/partners/harlem.png"
     },
     {
       slug: "lorenzo-casati-shop",
@@ -120,17 +120,35 @@ window.SITE = {
       category: "Gear & Rental",
       description: "Test, rent and talk gear in Tarifa.",
       perk: "",                                                    // TODO: confirm the perk with the shop before showing it
-      url: "https://shop.lorenzocasati.com",
-      logo: ""                                                     // TODO: add assets/img/partner-lorenzo-casati-shop.png
+      url: "https://shop.lorenzocasati.com/",
+      logo: "assets/img/partners/lorenzo-casati-shop.png"
     },
     {
       slug: "balneario",
       name: "Balneario Beach Club",
       category: "Eat",
-      description: "Our home on the beach.",
+      description: "Our home on the beach. Eat, chill, drink.",
       perk: "",                                                    // TODO: confirm the perk with Balneario before showing it
-      url: "https://www.instagram.com/balneariotarifa/",
-      logo: ""                                                     // TODO: add assets/img/partner-balneario.png
+      url: "https://balneariobeachclubtarifa.com/",                // TODO: their site answered an error on 2 Oct, check it is back up
+      logo: "assets/img/partners/balneario.png"
+    },
+    {
+      slug: "dunna",
+      name: "Dunna Playa Tarifa",
+      category: "Eat",
+      description: "Restaurant and pool facing the sea.",
+      perk: "",
+      url: "https://dunnaplayatarifa.com/",
+      logo: "assets/img/partners/dunna.png"
+    },
+    {
+      slug: "la-teteria",
+      name: "La Teteria de Tarifa",
+      category: "Night",
+      description: "Cocktails and a patio in the old town.",
+      perk: "",
+      url: "https://lateteriadetarifa.com/",
+      logo: "assets/img/partners/la-teteria.png"
     },
     {
       slug: "mombassa",
@@ -138,8 +156,26 @@ window.SITE = {
       category: "Night",
       description: "Where the session ends.",
       perk: "",                                                    // TODO: confirm the perk with Mombassa before showing it
-      url: "https://www.instagram.com/mombassatarifa/",
-      logo: ""                                                     // TODO: add assets/img/partner-mombassa.png
+      url: "https://mombassatarifa.com/",
+      logo: "assets/img/partners/mombassa.png"
+    },
+    {
+      slug: "aura-sport-club",
+      name: "Aura Sport Club",
+      category: "Train",
+      description: "Training, wellness and padel.",
+      perk: "",
+      url: "https://aurasportclub.es/",
+      logo: "assets/img/partners/aura.svg"
+    },
+    {
+      slug: "tribala",
+      name: "Tribala",
+      category: "Travel",
+      description: "Sport trips with your tribe.",
+      perk: "",
+      url: "https://tribala.travel/",
+      logo: "assets/img/partners/tribala.svg"
     },
     {
       slug: "the-wind-games",
@@ -148,16 +184,15 @@ window.SITE = {
       description: "Track your jumps, climb the ranking.",
       perk: "",
       url: "https://thewindgames.app",
-      logo: ""                                                     // TODO: add assets/img/partner-the-wind-games.png
+      logo: "assets/img/partners/the-wind-games.svg"
     }
   ],
 
   /* ---------- 9. FOOTER BRANDS ---------- */
   footer: {
-    brands: [
-      { id: "harlem", name: "Harlem", url: "https://harlemkitesurfing.com" },
-      { id: "lorenzo-casati-shop", name: "Lorenzo Casati Shop", url: "https://shop.lorenzocasati.com/" }
-    ]
+    privacyUrl: "",                                                // set to "privacy.html" to show the privacy link in the footer again
+    taglineLogo: "assets/img/change-the-tide-white.png",           // leave "" to show the words instead
+    brands: []                                                   // add { id, name, url } here to show links in the footer
   },
 
   /* ---------- 10. WEBCAM SPONSOR ----------
@@ -185,10 +220,12 @@ window.SITE = {
       instagram: "Instagram"
     },
     webcam: {
-      liveLabel: "LIVE · Balneario Beach Club, Tarifa",
+      statusLive: "Live",
+      statusSoon: "Coming soon",
+      statusSleeping: "Sleeping",
       frameTitle: "Live webcam, Balneario Beach Club, Tarifa",
       soonTitle: "Live cam coming soon.",
-      soonText: "Join the crew and be the first to know when it's live.",
+      soonText: "Join the family and be the first to know when it's live.",
       offlineTitle: "The cam is sleeping.",
       offlineText: "Back at first light. Meanwhile, check what's next."
     },
@@ -205,7 +242,7 @@ window.SITE = {
       directionPrefix: "Wind from"
     },
     join: {
-      title: "Join the crew.",
+      title: "Join the family.",
       text: "Sessions, events, challenges and wind calls. All in one WhatsApp group.",
       secondary: "Follow @harlemclubhouse.tarifa"
     },
@@ -213,7 +250,7 @@ window.SITE = {
       title: "Next up",
       details: "Details",
       emptyTitle: "Next event coming soon.",
-      emptyText: "Join the crew to hear first."
+      emptyText: "Join the family to hear first."
     },
     partners: {
       title: "Tarifa by the Clubhouse",
@@ -224,7 +261,7 @@ window.SITE = {
       months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     },
     footer: {
-      line1: "Harlem Clubhouse Tarifa. A home for the community.",
+      line1: "Harlem Clubhouse Tarifa. A home for the kite community.",
       line2: "Change the tide.",
       sponsorLabel: "Webcam powered by",
       sponsorEmpty: "Want your brand here? Let's talk.",
