@@ -76,12 +76,25 @@
     return a;
   }
 
-  function whatsappLink(label, cls) {
-    var a = node("a", cls, label);
-    setLink(a, (S.links || {}).whatsapp);
-    a.setAttribute("data-track-whatsapp", "");
-    if (isUrl((S.links || {}).whatsapp)) { a.target = "_blank"; a.rel = "noopener"; }
+  /* Every main button points at the same place, set by cta.target
+     in config.js, so swapping Instagram for WhatsApp is one word. */
+  function ctaTarget() {
+    var t = String((S.cta || {}).target || "whatsapp").toLowerCase();
+    return t === "instagram" ? "instagram" : "whatsapp";
+  }
+
+  function ctaLink(cls) {
+    var target = ctaTarget();
+    var url = (S.links || {})[target];
+    var a = node("a", cls, text("buttons." + target));
+    setLink(a, url);
+    a.setAttribute("data-track-cta", target);
+    if (isUrl(url)) { a.target = "_blank"; a.rel = "noopener"; }
     return a;
+  }
+
+  function sectionOn(name) {
+    return (S.sections || {})[name] !== false;
   }
 
   function clear(el) { while (el && el.firstChild) el.removeChild(el.firstChild); }
@@ -157,8 +170,51 @@
 
   function applyLinks() {
     var links = S.links || {};
+    var target = ctaTarget();
     $$('[data-link="whatsapp"]').forEach(function (a) { setLink(a, links.whatsapp); });
     $$('[data-link="instagram"]').forEach(function (a) { setLink(a, links.instagram); });
+
+    $$("[data-cta]").forEach(function (a) {
+      a.textContent = text("buttons." + target);
+      setLink(a, links[target]);
+      a.setAttribute("data-track-cta", target);
+      if (isUrl(links[target])) { a.target = "_blank"; a.rel = "noopener"; }
+    });
+
+    // no point offering Instagram twice in the same block
+    if (target === "instagram") {
+      $$('.join [data-link="instagram"]').forEach(function (a) { a.hidden = true; });
+    }
+  }
+
+  /* The venue logo next to ours in the header. */
+  function renderVenue() {
+    var v = S.venue || {};
+    var host = $("#venue");
+    var sep = $("#venue-sep");
+    if (!host || !v.logo) return;
+    var img = node("img", "header__venue-logo");
+    img.src = v.logo;
+    img.alt = v.name || "";
+    img.width = 180;
+    img.height = 174;
+    host.appendChild(img);
+    if (isUrl(v.url)) {
+      host.href = withUtm(v.url, "venue_header");
+      host.target = "_blank";
+      host.rel = "noopener";
+    }
+    host.hidden = false;
+    if (sep) sep.hidden = false;
+  }
+
+  function applySections() {
+    [["wind", "#section-wind"], ["join", "#section-join"],
+     ["events", "#section-next"], ["partners", "#section-partners"]]
+      .forEach(function (pair) {
+        var el = $(pair[1]);
+        if (el && !sectionOn(pair[0])) el.hidden = true;
+      });
   }
 
   /* Header logo falls back to the brand name if the file is missing. */
@@ -203,7 +259,7 @@
       var empty = node("div", "card card--empty");
       empty.appendChild(node("h3", "card__title", text("events.emptyTitle")));
       empty.appendChild(node("p", "card__text", text("events.emptyText")));
-      empty.appendChild(whatsappLink(text("events.emptyButton"), "btn btn--primary"));
+      empty.appendChild(ctaLink("btn btn--primary"));
       host.appendChild(empty);
       return;
     }
@@ -331,7 +387,7 @@
       line.appendChild(node("span", "cam__next-title", event.title || ""));
       card.appendChild(line);
     }
-    if (withButton) card.appendChild(whatsappLink(text("webcam.soonButton"), "btn btn--primary"));
+    if (withButton) card.appendChild(ctaLink("btn btn--primary"));
     return card;
   }
 
@@ -574,7 +630,8 @@
       var a = ev.target && ev.target.closest ? ev.target.closest("a") : null;
       if (!a) return;
       if (a.getAttribute("data-unset") === "true") { ev.preventDefault(); return; }
-      if (a.hasAttribute("data-track-whatsapp")) track("Join WhatsApp");
+      var cta = a.getAttribute("data-track-cta");
+      if (cta) track(cta === "instagram" ? "Follow Instagram" : "Join WhatsApp");
       var slug = a.getAttribute("data-partner");
       if (slug) track("Partner Click", { partner: slug });
     });
@@ -587,10 +644,12 @@
     applyCopy();
     applyLinks();
     logoFallback();
+    renderVenue();
+    applySections();
     renderCam(true);
-    renderWind();
-    renderEvent();
-    renderPartners();
+    if (sectionOn("wind")) renderWind();
+    if (sectionOn("events")) renderEvent();
+    if (sectionOn("partners")) renderPartners();
     renderFooterBrands();
     renderSponsor();
     initClicks();

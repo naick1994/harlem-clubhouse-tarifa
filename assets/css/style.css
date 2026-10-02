@@ -580,3 +580,36 @@ p { margin: 0; }
 .legal__h { font-size: 18px; margin-top: 30px; margin-bottom: 8px; }
 .legal p { color: var(--color-muted); margin-bottom: 12px; }
 .legal__back { margin-top: 32px; }
+
+/* ---------------------------------------------------- header lockup */
+
+.header__lockup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.header__sep {
+  width: 1px;
+  height: 24px;
+  background: var(--color-line);
+  flex: none;
+}
+
+.header__venue {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.header__venue-logo {
+  height: 32px;
+  width: auto;
+}
+
+@media (min-width: 720px) {
+  .header__lockup { gap: 16px; }
+  .header__sep { height: 28px; }
+  .header__venue-logo { height: 38px; }
+}

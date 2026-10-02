@@ -36,10 +36,14 @@
 
 <header class="header">
   <div class="wrap header__inner">
-    <a class="header__brand" href="/" aria-label="Harlem Clubhouse Tarifa">
-      <img class="header__logo" data-logo src="assets/img/logo-clubhouse.png" width="680" height="187"
-           alt="Harlem Clubhouse Tarifa" data-copy-alt="header.logoAlt">
-    </a>
+    <div class="header__lockup">
+      <a class="header__brand" href="/" aria-label="Harlem Clubhouse Tarifa">
+        <img class="header__logo" data-logo src="assets/img/logo-clubhouse.png" width="680" height="187"
+             alt="Harlem Clubhouse Tarifa" data-copy-alt="header.logoAlt">
+      </a>
+      <span class="header__sep" id="venue-sep" hidden aria-hidden="true"></span>
+      <a class="header__venue" id="venue" hidden></a>
+    </div>
     <a class="header__social" data-link="instagram" target="_blank" rel="noopener"
        aria-label="Instagram" data-copy-aria="header.instagram">
       <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
@@ -66,7 +70,7 @@
   </section>
 
   <!-- 2. Wind now -->
-  <section class="wind" aria-labelledby="wind-heading">
+  <section class="wind" id="section-wind" aria-labelledby="wind-heading">
     <div class="wrap">
       <h2 class="section__label" id="wind-heading" data-copy="wind.title">Wind now</h2>
       <div id="wind-embed" hidden></div>
@@ -96,19 +100,18 @@
   </section>
 
   <!-- 3. Join the crew -->
-  <section class="join" aria-labelledby="join-heading">
+  <section class="join" id="section-join" aria-labelledby="join-heading">
     <div class="wrap join__inner">
       <h2 class="join__title" id="join-heading" data-copy="join.title">Join the crew.</h2>
       <p class="join__text" data-copy="join.text">Sessions, events, challenges and wind calls. All in one WhatsApp group.</p>
-      <a class="btn btn--primary btn--big" data-link="whatsapp" data-track-whatsapp target="_blank" rel="noopener"
-         data-copy="join.primary">Join on WhatsApp</a>
+      <a class="btn btn--primary btn--big" data-cta target="_blank" rel="noopener">Follow on Instagram</a>
       <a class="link link--muted" data-link="instagram" target="_blank" rel="noopener"
-         data-copy="join.secondary">Follow @harlemclubhousetarifa</a>
+         data-copy="join.secondary">Follow @harlemclubhouse.tarifa</a>
     </div>
   </section>
 
   <!-- 4. Next up -->
-  <section class="next" aria-labelledby="next-heading">
+  <section class="next" id="section-next" aria-labelledby="next-heading">
     <div class="wrap">
       <h2 class="section__label" id="next-heading" data-copy="events.title">Next up</h2>
       <div id="event"></div>
@@ -116,7 +119,7 @@
   </section>
 
   <!-- 5. Partners -->
-  <section class="tarifa" aria-labelledby="tarifa-heading">
+  <section class="tarifa" id="section-partners" aria-labelledby="tarifa-heading">
     <div class="wrap">
       <h2 class="section__title" id="tarifa-heading" data-copy="partners.title">Tarifa by the Clubhouse</h2>
       <p class="section__sub" data-copy="partners.subtitle">Where we ride, eat and party.</p>

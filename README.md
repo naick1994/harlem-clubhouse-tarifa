@@ -61,6 +61,31 @@ Cards appear in the order you write them. `perk` is optional, leave `""` to show
 Never write a perk or a discount code you have not agreed with the partner.
 The Harlem card never carries a discount code.
 
+### Show or hide a whole section
+
+While the webcam is not installed, the site shows only the cam card. Wind,
+Join the crew, Next up and the partner cards are switched off in `sections`.
+Nothing was deleted. Set one to `true` and it comes back exactly as it was:
+
+```js
+sections: {
+  wind: true,
+  join: true,
+  events: true,
+  partners: true
+}
+```
+
+### Which place the main buttons point to
+
+Every main button follows one setting. It is on Instagram now because the
+WhatsApp group link does not exist yet. Fill `links.whatsapp` and change this
+to `"whatsapp"` and every button on the site follows:
+
+```js
+cta: { target: "whatsapp" }
+```
+
 ### Texts
 
 Every visible word is in the `copy` block at the bottom of `config.js`.
@@ -175,11 +200,10 @@ Netlify and GitHub Pages work the same way: no build command, publish the root f
 
 ## 6. Before going live
 
-- [ ] `links.whatsapp` points to the real WhatsApp group
+- [ ] `links.whatsapp` points to the real WhatsApp group, then set `cta.target` to `"whatsapp"`
 - [ ] `links.contactEmail` is a real inbox
 - [ ] `location.lat` and `location.lon` match the cam spot
 - [ ] `forecast.windguru` and `forecast.windfinder` point to the Tarifa spot
-- [ ] Footer brand links are complete, Flight Mode included
 - [ ] Partner perks agreed with each partner, or left empty
 - [ ] Partner logos added
 - [ ] Example event replaced with a real one

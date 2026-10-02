@@ -17,8 +17,35 @@ window.SITE = {
   /* ---------- 2. LINKS ---------- */
   links: {
     whatsapp: "TODO",                                              // TODO: paste the WhatsApp group invite link (https://chat.whatsapp.com/...)
-    instagram: "https://www.instagram.com/harlemclubhousetarifa/",
+    instagram: "https://www.instagram.com/harlemclubhouse.tarifa/",
     contactEmail: "TODO"                                           // TODO: email for sponsor requests, no "mailto:" needed
+  },
+
+  /* ---------- 2b. VENUE ----------
+     The house the Clubhouse lives in. Its logo sits next to ours in the
+     header. Leave logo: "" to show only the Clubhouse logo. */
+  venue: {
+    name: "Balneario Beach Club Tarifa",
+    url: "https://balneariobeachclubtarifa.com/",
+    logo: "assets/img/logo-balneario.png"
+  },
+
+  /* ---------- 2c. MAIN BUTTON ----------
+     Where every main button on the site points.
+     "instagram" while the WhatsApp group is not ready.
+     Change to "whatsapp" once links.whatsapp above is filled in. */
+  cta: {
+    target: "instagram"
+  },
+
+  /* ---------- 2d. SECTIONS ----------
+     false hides a whole section, nothing is lost. Set one to true and
+     it comes back exactly as it was. */
+  sections: {
+    wind: false,
+    join: false,
+    events: false,
+    partners: false
   },
 
   /* ---------- 3. LOCATION (used by the wind) ---------- */
@@ -129,8 +156,7 @@ window.SITE = {
   footer: {
     brands: [
       { id: "harlem", name: "Harlem", url: "https://harlemkitesurfing.com" },
-      { id: "lorenzo-casati-shop", name: "Lorenzo Casati Shop", url: "https://shop.lorenzocasati.com" },
-      { id: "flight-mode", name: "Flight Mode", url: "TODO" }      // TODO: paste the Flight Mode url
+      { id: "lorenzo-casati-shop", name: "Lorenzo Casati Shop", url: "https://shop.lorenzocasati.com/" }
     ]
   },
 
@@ -149,6 +175,10 @@ window.SITE = {
   /* ---------- 12. TEXTS ----------
      Every visible word on the site. Translate here later. */
   copy: {
+    buttons: {
+      whatsapp: "Join on WhatsApp",
+      instagram: "Follow on Instagram"
+    },
     header: {
       logoAlt: "Harlem Clubhouse Tarifa",
       logoFallback: "HARLEM CLUBHOUSE TARIFA",
@@ -159,7 +189,6 @@ window.SITE = {
       frameTitle: "Live webcam, Balneario Beach Club, Tarifa",
       soonTitle: "Live cam coming soon.",
       soonText: "Join the crew and be the first to know when it's live.",
-      soonButton: "Join on WhatsApp",
       offlineTitle: "The cam is sleeping.",
       offlineText: "Back at first light. Meanwhile, check what's next."
     },
@@ -178,15 +207,13 @@ window.SITE = {
     join: {
       title: "Join the crew.",
       text: "Sessions, events, challenges and wind calls. All in one WhatsApp group.",
-      primary: "Join on WhatsApp",
-      secondary: "Follow @harlemclubhousetarifa"
+      secondary: "Follow @harlemclubhouse.tarifa"
     },
     events: {
       title: "Next up",
       details: "Details",
       emptyTitle: "Next event coming soon.",
-      emptyText: "Join the crew to hear first.",
-      emptyButton: "Join on WhatsApp"
+      emptyText: "Join the crew to hear first."
     },
     partners: {
       title: "Tarifa by the Clubhouse",
