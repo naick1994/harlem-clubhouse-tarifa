@@ -514,6 +514,19 @@ h1, h2, h3 {
 
 .lightbox__close:hover { border-color: var(--surface); }
 
+/* ---------------------------------------------------- the closing photograph */
+
+.closing { display: block; }
+
+.closing__photo {
+  width: 100%;
+  height: auto;
+  max-height: 62svh;
+  object-fit: cover;
+  object-position: center 62%;
+  display: block;
+}
+
 /* ---------------------------------------------------- the ask */
 
 .join { padding: var(--s7) 0; }

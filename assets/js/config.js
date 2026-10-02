@@ -198,9 +198,11 @@ window.SITE = {
     { src: "assets/img/photos/clubhouse-03.jpg", alt: "Balneario lanyards on a table", w: 900, h: 600 },
     { src: "assets/img/photos/clubhouse-04.jpg", alt: "The crew at a table facing the water", w: 900, h: 671 },
     { src: "assets/img/photos/clubhouse-05.jpg", alt: "Walking the kite down the beach", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-27.jpg", alt: "Sunset crowd under the Balneario sign", w: 768, h: 768 },
     { src: "assets/img/photos/clubhouse-06.jpg", alt: "The Clubhouse from the beach path", w: 900, h: 600 },
     { src: "assets/img/photos/clubhouse-07.jpg", alt: "Two of the crew on the terrace", w: 600, h: 900 },
     { src: "assets/img/photos/clubhouse-08.jpg", alt: "Board, bag and shirt on the bar", w: 900, h: 600 },
+    { src: "assets/img/photos/clubhouse-28.jpg", alt: "The DJ and a full house at the bar", w: 768, h: 768 },
     { src: "assets/img/photos/clubhouse-09.jpg", alt: "Glasses raised at the Clubhouse", w: 900, h: 600 },
     { src: "assets/img/photos/clubhouse-10.jpg", alt: "Harlem flag beside the Balneario sign", w: 600, h: 900 },
     { src: "assets/img/photos/clubhouse-11.jpg", alt: "The terrace with the Clubhouse banners", w: 900, h: 600 },
@@ -220,6 +222,13 @@ window.SITE = {
     { src: "assets/img/photos/clubhouse-25.jpg", alt: "The DJ and the kit behind the bar", w: 900, h: 600 },
     { src: "assets/img/photos/clubhouse-26.jpg", alt: "Two riders toasting after the session", w: 900, h: 600 }
   ],
+
+  /* ---------- 8c. CLOSING IMAGE ----------
+     One wide photograph just before the footer. Leave src: "" to hide it. */
+  closing: {
+    src: "assets/img/tarifa-tower.jpg",
+    alt: "A kiter above the old tower at Tarifa"
+  },
 
   /* ---------- 9. FOOTER BRANDS ---------- */
   footer: {

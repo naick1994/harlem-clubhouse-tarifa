@@ -761,6 +761,16 @@
     host.appendChild(line);
   }
 
+  /* One wide photograph, full bleed, just before the footer. */
+  function renderClosing() {
+    var host = $("#section-closing");
+    var closing = S.closing || {};
+    if (!host || !closing.src) return;
+    clear(host);
+    host.appendChild(lazyImage("closing__photo", closing.src, closing.alt || ""));
+    host.hidden = false;
+  }
+
   /* A photograph opens at full size. Without scripting the link still
      opens the file on its own. */
   var lightbox = null;
@@ -836,6 +846,7 @@
     if (sectionOn("events")) renderEvent();
     if (sectionOn("partners")) renderPartners();
     renderPhotos();
+    renderClosing();
     renderTagline();
     renderPrivacy();
     renderFooterBrands();
