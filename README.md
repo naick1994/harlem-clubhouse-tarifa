@@ -147,7 +147,17 @@ local server to load.
 
 ---
 
-## 5. Put it online with Cloudflare Pages
+## 5. Where the site lives
+
+The site is online at **https://harlem.clubhousetarifa.com**, hosted on GitHub Pages
+from the repository `naick1994/harlem-clubhouse-tarifa`. Every push to the `main`
+branch updates the live site in about a minute.
+
+The domain `clubhousetarifa.com` is registered at GoDaddy. The subdomain is one
+DNS record: `CNAME  harlem  ->  naick1994.github.io`. The `CNAME` file in this
+folder tells GitHub which domain to answer on, so do not delete it.
+
+### If you ever move to Cloudflare Pages
 
 1. Push this folder to a GitHub repository.
 2. Go to Cloudflare, Workers and Pages, **Create**, **Pages**, **Connect to Git**.
@@ -175,7 +185,7 @@ Netlify and GitHub Pages work the same way: no build command, publish the root f
 - [ ] Example event replaced with a real one
 - [ ] `privacy.html` reviewed by someone legal, company name and address filled in
 - [ ] `analytics.plausibleDomain` set, or left empty on purpose
-- [ ] Open Graph image and URL updated with the real domain in `index.html`
+- [x] Open Graph image and URL updated with the real domain in `index.html`
 
 ---
 
