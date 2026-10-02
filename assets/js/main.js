@@ -284,20 +284,33 @@
     v.setAttribute("aria-label", text("webcam.frameTitle"));
 
     var start = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+    var native = function () { v.src = url; start(); };
 
-    if (v.canPlayType("application/vnd.apple.mpegurl")) {
-      v.src = url;
-      start();
-    } else if (window.Hls) {
-      attachHls(v, url, start);
-    } else {
-      var s = document.createElement("script");
-      s.src = HLS_CDN;
-      s.async = true;
-      s.onload = function () { attachHls(v, url, start); };
-      document.head.appendChild(s);
-    }
+    if (nativeHls(v)) { native(); return v; }
+    if (window.Hls) { attachHls(v, url, start); return v; }
+
+    var s = document.createElement("script");
+    s.src = HLS_CDN;
+    s.async = true;
+    s.onload = function () {
+      if (window.Hls && window.Hls.isSupported()) attachHls(v, url, start);
+      else if (v.canPlayType("application/vnd.apple.mpegurl")) native();
+    };
+    s.onerror = function () {
+      if (v.canPlayType("application/vnd.apple.mpegurl")) native();
+    };
+    document.head.appendChild(s);
     return v;
+  }
+
+  /* Safari plays .m3u8 on its own. Chrome answers "maybe" to the same
+     question and then cannot play it, so the native path is only trusted
+     on Safari, or where there is no Media Source Extensions at all. */
+  function nativeHls(video) {
+    if (!video.canPlayType("application/vnd.apple.mpegurl")) return false;
+    var ua = navigator.userAgent;
+    var isSafari = /safari/i.test(ua) && !/chrome|chromium|crios|android|fxios|edg/i.test(ua);
+    return isSafari || !window.MediaSource;
   }
 
   function attachHls(video, url, start) {
