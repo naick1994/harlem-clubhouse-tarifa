@@ -64,15 +64,25 @@ window.SITE = {
   /* ---------- 5. WEBCAM ----------
      provider: "none" | "youtube" | "iframe" | "hls"
      Switch the cam live by changing provider and filling the
-     matching field. Nothing else on the site needs to change. */
+     matching field. Nothing else on the site needs to change.
+     "hls" is our own relay (cam-relay/): it tries webrtcUrl first,
+     falls back to hlsUrl, and shows the head count from viewersUrl.
+     None of these addresses carry the cam password, they are public. */
   webcam: {
-    provider: "none",
+    provider: "none",                                     // set to "hls" once the relay on cam.clubhousetarifa.com is up
     youtubeChannelId: "",        // preferred for YouTube: survives stream restarts
     youtubeVideoId: "",          // alternative to the channel id
     iframeUrl: "",               // generic embed url from a webcam service
-    hlsUrl: "",                  // .m3u8 stream
+    hlsUrl: "https://cam.clubhousetarifa.com/live/balneario/index.m3u8",   // .m3u8 stream
+    webrtcUrl: "https://cam.clubhousetarifa.com/live/balneario/whep",         // WHEP address, under a second of delay
+    viewersUrl: "https://cam.clubhousetarifa.com/presence",                    // head counter, leave "" to hide it
+    overlayLogos: [                                       // logos laid over the live picture, [] for none
+      "assets/img/logo-clubhouse-white.png",
+      "assets/img/logo-balneario-white.png"
+    ],
+    overlayPosition: "top-left",                          // "top-left" | "top-right" | "bottom-left" | "bottom-right"
     poster: "assets/img/cam-poster-1600.jpg",   // the photo the window shows while there is no video
-    liveHours: { start: "07:30", end: "21:30", timezone: "Europe/Madrid" }
+    liveHours: { start: "", end: "", timezone: "Europe/Madrid" }   // empty start and end: live 24/7
   },
 
   /* ---------- 6. WIND ---------- */
@@ -265,6 +275,11 @@ window.SITE = {
       statusLive: "Live",
       statusSoon: "Coming soon",
       statusSleeping: "Sleeping",
+      statusConnecting: "Connecting",
+      statusRetrying: "Reconnecting",
+      viewersOne: "1 watching",
+      viewersMany: "{n} watching",
+      fullscreen: "Full screen",
       frameTitle: "Live webcam, Balneario Beach Club, Tarifa",
       soonTitle: "Live cam coming soon.",
       soonText: "Join the family and be the first to know when it's live.",
@@ -312,7 +327,8 @@ window.SITE = {
       sponsorLabel: "Webcam powered by",
       sponsorEmpty: "Want your brand here? Let's talk.",
       notice: "Live panoramic view. Nothing is recorded.",
-      privacy: "Privacy"
+      privacy: "Privacy",
+      credit: "Built and developed by Nicholas Baruffaldi"
     }
   }
 };

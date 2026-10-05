@@ -333,36 +333,240 @@
     return f;
   }
 
-  function camVideo(url) {
+  /* Logos laid over the live picture. They live in the page, not in the
+     stream, so the relay never has to re-encode the video. */
+  function camMarks(w, frame) {
+    var logos = (w.overlayLogos || []).filter(Boolean);
+    if (!logos.length) return;
+    var box = node("div", "window__marks window__marks--" + (w.overlayPosition || "top-left"));
+    box.setAttribute("aria-hidden", "true");
+    logos.forEach(function (src, i) {
+      if (i) box.appendChild(node("span", "window__marks-rule"));
+      var img = node("img", "window__mark");
+      img.src = src;
+      img.alt = "";
+      box.appendChild(img);
+    });
+    frame.appendChild(box);
+  }
+
+  /* Full screen takes the whole window with it, logos included. Where the
+     browser cannot do that (iPhone), the window fills the screen instead. */
+  function camZoom(frame, video) {
+    var btn = node("button", "window__zoom");
+    btn.type = "button";
+    btn.setAttribute("aria-label", text("webcam.fullscreen"));
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+    frame.appendChild(btn);
+
+    var native = frame.requestFullscreen || frame.webkitRequestFullscreen;
+    var current = function () { return document.fullscreenElement || document.webkitFullscreenElement; };
+    var toggle = function () {
+      if (native) {
+        if (current()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        else native.call(frame);
+      } else {
+        var on = !frame.classList.contains("is-filled");
+        frame.classList.toggle("is-filled", on);
+        document.documentElement.classList.toggle("u-locked", on);
+      }
+    };
+    btn.addEventListener("click", toggle);
+    video.addEventListener("dblclick", toggle);
+    video.addEventListener("click", function () { if (video.paused) playVideo(video); });
+  }
+
+  function camVideo() {
     var v = document.createElement("video");
     v.className = "cam__embed";
     v.muted = true;
     v.autoplay = true;
-    v.controls = true;
+    v.controls = false;
     v.setAttribute("muted", "");
     v.setAttribute("autoplay", "");
     v.setAttribute("playsinline", "");
     v.playsInline = true;
     v.setAttribute("aria-label", text("webcam.frameTitle"));
+    var poster = (S.webcam || {}).poster;
+    if (poster) v.poster = poster;
+    return v;
+  }
 
-    var start = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
-    var native = function () { v.src = url; start(); };
+  function playVideo(v) {
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {});
+  }
 
-    if (nativeHls(v)) { native(); return v; }
-    if (window.Hls) { attachHls(v, url, start); return v; }
+  /* The live feed. WebRTC first (under a second behind the beach), HLS
+     when WebRTC cannot connect. If the picture stops moving, the player
+     tears itself down and tries again, waiting a little longer each time.
+     A hidden tab lets go of the stream and picks it up at the live edge
+     when it comes back. */
+  var FEED = { connecting: "webcam.statusConnecting", playing: "webcam.statusLive", retrying: "webcam.statusRetrying" };
 
+  function setFeed(state) {
+    var band = $(".window");
+    if (band) band.setAttribute("data-feed", state);
+    var status = $("#cam-status-text");
+    if (status) status.textContent = text(FEED[state]);
+  }
+
+  function camLive(w, frame) {
+    var v = camVideo();
+    frame.appendChild(v);
+    camMarks(w, frame);
+    camZoom(frame, v);
+
+    var modes = [];
+    if (w.webrtcUrl && window.RTCPeerConnection && window.fetch) modes.push("webrtc");
+    if (w.hlsUrl) modes.push("hls");
+    var mode = 0, tries = 0, run = 0, stop = null, retry = null, playing = false;
+    var lastTime = -1, lastMove = Date.now();
+
+    function teardown() {
+      run++;
+      if (stop) { stop(); stop = null; }
+      clearTimeout(retry);
+    }
+
+    function attempt() {
+      teardown();
+      if (!modes.length) return;
+      var id = run;
+      playing = false;
+      lastTime = -1;
+      lastMove = Date.now();
+      setFeed(tries ? "retrying" : "connecting");
+      var fail = function () { if (id === run) failed(); };
+      stop = modes[mode] === "webrtc" ? playWebRTC(v, w.webrtcUrl, fail) : playHls(v, w.hlsUrl, fail);
+    }
+
+    function failed() {
+      teardown();
+      tries++;
+      if (!playing) mode = (mode + 1) % modes.length;
+      setFeed("retrying");
+      retry = setTimeout(attempt, Math.min(30000, 1000 * Math.pow(2, Math.min(tries, 5))));
+    }
+
+    function moving() {
+      lastMove = Date.now();
+      if (!playing) { playing = true; tries = 0; setFeed("playing"); }
+    }
+
+    v.addEventListener("timeupdate", function () {
+      if (v.currentTime > 0 && v.currentTime !== lastTime) { lastTime = v.currentTime; moving(); }
+    });
+
+    var watchdog = setInterval(function () {
+      if (document.hidden || !stop) return;
+      if (Date.now() - lastMove > (playing ? 8000 : 15000)) failed();
+    }, 2000);
+
+    var onVisibility = function () {
+      if (document.hidden) { teardown(); setFeed("connecting"); }
+      else { tries = 0; attempt(); }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    if (document.hidden) setFeed("connecting"); else attempt();
+
+    return {
+      destroy: function () {
+        teardown();
+        clearInterval(watchdog);
+        document.removeEventListener("visibilitychange", onVisibility);
+        var band = $(".window");
+        if (band) band.removeAttribute("data-feed");
+      }
+    };
+  }
+
+  /* WHEP: one POST with our offer, the relay answers with its own. */
+  function playWebRTC(video, url, fail) {
+    var pc = new RTCPeerConnection();
+    var closed = false;
+    pc.addTransceiver("video", { direction: "recvonly" });
+    pc.ontrack = function (e) {
+      video.srcObject = e.streams[0] || new MediaStream([e.track]);
+      playVideo(video);
+    };
+    pc.onconnectionstatechange = function () {
+      if (pc.connectionState === "failed") fail();
+    };
+    pc.createOffer()
+      .then(function (offer) { return pc.setLocalDescription(offer); })
+      .then(function () { return iceGathered(pc, 1000); })
+      .then(function () {
+        return fetch(url, { method: "POST", headers: { "Content-Type": "application/sdp" }, body: pc.localDescription.sdp });
+      })
+      .then(function (res) {
+        if (res.status !== 201) throw new Error("whep " + res.status);
+        return res.text();
+      })
+      .then(function (sdp) {
+        if (!closed) return pc.setRemoteDescription({ type: "answer", sdp: sdp });
+      })
+      .catch(function () { if (!closed) fail(); });
+
+    return function () {
+      closed = true;
+      try { pc.close(); } catch (e) {}
+      video.srcObject = null;
+    };
+  }
+
+  function iceGathered(pc, maxWait) {
+    return new Promise(function (resolve) {
+      if (pc.iceGatheringState === "complete") return resolve();
+      var t = setTimeout(resolve, maxWait);
+      pc.addEventListener("icegatheringstatechange", function () {
+        if (pc.iceGatheringState === "complete") { clearTimeout(t); resolve(); }
+      });
+    });
+  }
+
+  function playHls(video, url, fail) {
+    var hls = null, dead = false;
+    var native = function () { video.src = url; playVideo(video); };
+    var onError = function () { if (!dead) fail(); };
+    video.addEventListener("error", onError);
+
+    withHlsJs(function () {
+      if (dead) return;
+      if (nativeHls(video)) return native();
+      if (!window.Hls || !window.Hls.isSupported()) {
+        if (video.canPlayType("application/vnd.apple.mpegurl")) native(); else fail();
+        return;
+      }
+      hls = new window.Hls({ liveSyncDurationCount: 2, maxLiveSyncPlaybackRate: 1.5, backBufferLength: 10 });
+      hls.on(window.Hls.Events.ERROR, function (e, data) {
+        if (!data.fatal) return;
+        if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+        else fail();
+      });
+      hls.on(window.Hls.Events.MANIFEST_PARSED, function () { playVideo(video); });
+      hls.loadSource(url);
+      hls.attachMedia(video);
+    });
+
+    return function () {
+      dead = true;
+      video.removeEventListener("error", onError);
+      if (hls) hls.destroy();
+      video.removeAttribute("src");
+      video.load();
+    };
+  }
+
+  function withHlsJs(done) {
+    if (window.Hls || nativeHls(document.createElement("video"))) return done();
     var s = document.createElement("script");
     s.src = HLS_CDN;
     s.async = true;
-    s.onload = function () {
-      if (window.Hls && window.Hls.isSupported()) attachHls(v, url, start);
-      else if (v.canPlayType("application/vnd.apple.mpegurl")) native();
-    };
-    s.onerror = function () {
-      if (v.canPlayType("application/vnd.apple.mpegurl")) native();
-    };
+    s.onload = done;
+    s.onerror = done;
     document.head.appendChild(s);
-    return v;
   }
 
   /* Safari plays .m3u8 on its own. Chrome answers "maybe" to the same
@@ -373,14 +577,6 @@
     var ua = navigator.userAgent;
     var isSafari = /safari/i.test(ua) && !/chrome|chromium|crios|android|fxios|edg/i.test(ua);
     return isSafari || !window.MediaSource;
-  }
-
-  function attachHls(video, url, start) {
-    if (!window.Hls || !window.Hls.isSupported()) return;
-    var hls = new window.Hls({ lowLatencyMode: true });
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(window.Hls.Events.MANIFEST_PARSED, start);
   }
 
   /* The window shows a photograph of the spot while there is no video. */
@@ -419,6 +615,7 @@
   }
 
   var currentCamState = null;
+  var camFeed = null;
 
   var STATUS = { live: "webcam.statusLive", offline: "webcam.statusSleeping", soon: "webcam.statusSoon" };
 
@@ -428,6 +625,7 @@
     var state = camState();
     if (!force && state === currentCamState) return;
     currentCamState = state;
+    if (camFeed) { camFeed.destroy(); camFeed = null; }
     clear(frame);
     frame.setAttribute("data-state", state);
 
@@ -437,6 +635,7 @@
     if (place) place.textContent = (S.location || {}).name || "";
     var status = $("#cam-status-text");
     if (status) status.textContent = text(STATUS[state]);
+    if (state !== "live") showViewers(0);
 
     renderNote(state);
 
@@ -458,9 +657,38 @@
         frame.appendChild(camIframe(w.iframeUrl));
         break;
       case "hls":
-        frame.appendChild(camVideo(w.hlsUrl));
+        camFeed = camLive(w, frame);
+        if (w.viewersUrl) startViewers(w.viewersUrl);
         break;
     }
+  }
+
+  /* How many people have the page open right now. Each open tab says
+     hello to the relay every 15 seconds and gets the head count back. */
+  var viewersStarted = false;
+
+  function startViewers(url) {
+    if (viewersStarted || !window.fetch) return;
+    viewersStarted = true;
+    var id = Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+    var ping = function () {
+      if (document.hidden) return;
+      fetch(url + (url.indexOf("?") < 0 ? "?" : "&") + "id=" + id, { cache: "no-store" })
+        .then(function (r) { return r.json(); })
+        .then(function (d) { showViewers(d && d.online); })
+        .catch(function () { showViewers(0); });
+    };
+    ping();
+    setInterval(ping, 15000);
+    document.addEventListener("visibilitychange", ping);
+  }
+
+  function showViewers(n) {
+    var el = $("#cam-viewers");
+    if (!el) return;
+    n = currentCamState === "live" ? Math.max(0, parseInt(n, 10) || 0) : 0;
+    el.textContent = n === 1 ? text("webcam.viewersOne") : text("webcam.viewersMany").replace("{n}", n);
+    el.hidden = !n;
   }
 
   /* ----------------------------------------------------- wind */

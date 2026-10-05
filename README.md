@@ -99,6 +99,14 @@ copy that block and translate it.
 The site works and looks finished without a cam. When the cam is ready, change
 `webcam` in `config.js`. Nothing else needs to change.
 
+**Our own relay (what the Balneario cam uses).** The cam pushes its stream to a
+small server at `cam.clubhousetarifa.com` (set up from the `cam-relay` folder,
+which is not part of this site). The page plays it over WebRTC, under a second
+behind the beach, and falls back to HLS on its own. It also shows how many
+people are watching and lays the logos in `overlayLogos` over the picture.
+Turn it on with `provider: "hls"`; the three addresses are already filled in
+and none of them holds the cam password.
+
 **YouTube channel (recommended).** The embed keeps working even when the stream
 restarts, because it follows the channel and not a single video.
 

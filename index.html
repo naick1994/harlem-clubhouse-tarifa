@@ -30,11 +30,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="assets/css/style.css?v=4">
+<link rel="stylesheet" href="assets/css/style.css?v=11">
 <link rel="preload" as="image" href="assets/img/cam-poster-1600.jpg" imagesrcset="assets/img/cam-poster-900.jpg 900w, assets/img/cam-poster-1600.jpg 1600w" imagesizes="100vw">
 
-<script src="assets/js/config.js?v=4" defer></script>
-<script src="assets/js/main.js?v=4" defer></script>
+<script src="assets/js/config.js?v=11" defer></script>
+<script src="assets/js/main.js?v=11" defer></script>
 </head>
 <body>
 
@@ -60,6 +60,7 @@
         <p class="window__status">
           <span class="window__dot" aria-hidden="true"></span>
           <span class="window__state" id="cam-status-text"></span>
+          <span class="window__viewers" id="cam-viewers" hidden></span>
         </p>
       </div>
       <div class="window__frame">
@@ -159,6 +160,11 @@
       <span data-copy="footer.notice">Live panoramic view. Nothing is recorded.</span>
       <a class="link link--quiet" id="footer-privacy" href="privacy.html" data-copy="footer.privacy" hidden>Privacy</a>
     </p>
+    <a class="credit" href="https://naick1994.github.io/about-nick/about-nick" target="_blank" rel="noopener">
+      <img class="credit__avatar" src="assets/img/nick-avatar.jpg" width="56" height="56" alt="" loading="lazy" decoding="async">
+      <span data-copy="footer.credit">Built and developed by Nicholas Baruffaldi</span>
+      <svg class="credit__arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg>
+    </a>
   </div>
 </footer>
 
