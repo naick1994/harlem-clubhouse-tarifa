@@ -285,6 +285,10 @@ h1, h2, h3 {
   .window__media.is-filled .window__marks-rule + .window__mark { height: 80px; }
 }
 
+/* the main button under the picture while the cam is live */
+.window__follow { margin-top: var(--s4); }
+.window__follow[hidden] { display: none; }
+
 /* the cam sends 16:9, the photograph it replaces is 4:3 */
 .window[data-cam="live"] .window__media { aspect-ratio: 16 / 9; }
 

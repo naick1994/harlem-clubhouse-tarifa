@@ -591,11 +591,23 @@
     return img;
   }
 
+  /* While the cam is live the message over the window is gone, so the main
+     button sits under the picture instead. */
+  function renderFollow(state) {
+    var row = $("#cam-follow");
+    if (!row) return;
+    clear(row);
+    if (state !== "live") { row.hidden = true; return; }
+    row.appendChild(ctaLink("button"));
+    row.hidden = false;
+  }
+
   /* The message under the window, left aligned like the rest of the page. */
   function renderNote(state) {
     var row = $("#cam-note");
     if (!row) return;
     clear(row);
+    renderFollow(state);
     if (state === "live") { row.hidden = true; return; }
 
     var title = state === "offline" ? text("webcam.offlineTitle") : text("webcam.soonTitle");
