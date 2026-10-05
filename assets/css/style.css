@@ -242,11 +242,11 @@ h1, h2, h3 {
 }
 
 /* in full screen the picture is shown whole, black bars where needed */
-.window__media:fullscreen { aspect-ratio: auto; background: #000; }
-.window__media:-webkit-full-screen { aspect-ratio: auto; background: #000; }
+.window[data-cam] .window__media:fullscreen { aspect-ratio: auto; background: #000; }
+.window[data-cam] .window__media:-webkit-full-screen { aspect-ratio: auto; background: #000; }
 .window__media:fullscreen > video,
 .window__media:-webkit-full-screen > video { object-fit: contain; }
-.window__media.is-filled {
+.window[data-cam] .window__media.is-filled {
   position: fixed;
   inset: 0;
   z-index: 100;
@@ -254,6 +254,23 @@ h1, h2, h3 {
   background: #000;
 }
 .window__media.is-filled > video { object-fit: contain; }
+
+/* in full screen the picture is letterboxed: keep the logos inside the
+   picture, not on the black bars. --bar-y and --bar-x are the bar sizes
+   for a 16:9 picture on this screen. */
+.window__media:fullscreen,
+.window__media.is-filled {
+  --bar-y: max(0px, (100vh - 100vw * 9 / 16) / 2);
+  --bar-x: max(0px, (100vw - 100vh * 16 / 9) / 2);
+}
+.window__media:fullscreen .window__marks--top-left,
+.window__media.is-filled .window__marks--top-left { top: calc(var(--bar-y) + 22px); left: calc(var(--bar-x) + 22px); }
+.window__media:fullscreen .window__marks--top-right,
+.window__media.is-filled .window__marks--top-right { top: calc(var(--bar-y) + 22px); right: calc(var(--bar-x) + 22px); }
+.window__media:fullscreen .window__marks--bottom-left,
+.window__media.is-filled .window__marks--bottom-left { bottom: calc(var(--bar-y) + 22px); left: calc(var(--bar-x) + 22px); }
+.window__media:fullscreen .window__marks--bottom-right,
+.window__media.is-filled .window__marks--bottom-right { bottom: calc(var(--bar-y) + 22px); right: calc(var(--bar-x) + 22px); }
 .u-locked, .u-locked body { overflow: hidden; }
 
 @media (min-width: 900px) {
