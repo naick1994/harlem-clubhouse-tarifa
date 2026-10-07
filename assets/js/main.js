@@ -352,7 +352,7 @@
 
   /* Full screen takes the whole window with it, logos included. Where the
      browser cannot do that (iPhone), the window fills the screen instead. */
-  function camZoom(frame, video) {
+  function camZoom(frame, surface, video) {
     var btn = node("button", "window__zoom");
     btn.type = "button";
     btn.setAttribute("aria-label", text("webcam.fullscreen"));
@@ -372,8 +372,100 @@
       }
     };
     btn.addEventListener("click", toggle);
-    video.addEventListener("dblclick", toggle);
-    video.addEventListener("click", function () { if (video.paused) playVideo(video); });
+    surface.addEventListener("dblclick", toggle);
+    if (video) video.addEventListener("click", function () { if (video.paused) playVideo(video); });
+  }
+
+  /* The YouTube live, dressed like our own player: no YouTube controls,
+     a transparent shield over the picture so its logo, title and right
+     click menu never take anyone to youtube.com, our logos and full screen
+     on top. The IFrame API tells us when frames move, so the LIVE badge
+     tells the truth, and a stalled or broken live reloads itself. */
+  var YT_API = "https://www.youtube.com/iframe_api";
+
+  function withYouTubeApi(done) {
+    if (window.YT && window.YT.Player) return done();
+    var prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = function () { if (prev) prev(); done(); };
+    if (!document.querySelector('script[src="' + YT_API + '"]')) {
+      var s = document.createElement("script");
+      s.src = YT_API;
+      s.async = true;
+      document.head.appendChild(s);
+    }
+  }
+
+  function camYouTube(w, frame) {
+    var params = "autoplay=1&mute=1&playsinline=1&controls=0&disablekb=1&fs=0&rel=0&iv_load_policy=3&modestbranding=1&enablejsapi=1&origin=" +
+      encodeURIComponent(location.origin);
+    var src = w.youtubeVideoId
+      ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(w.youtubeVideoId) + "?" + params
+      : "https://www.youtube-nocookie.com/embed/live_stream?channel=" + encodeURIComponent(w.youtubeChannelId) + "&" + params;
+
+    var iframe = camIframe(src);
+    iframe.id = "cam-yt";
+    iframe.setAttribute("tabindex", "-1");
+    frame.appendChild(iframe);
+
+    var shield = node("div", "window__shield");
+    shield.setAttribute("aria-hidden", "true");
+    shield.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+    frame.appendChild(shield);
+    camMarks(w, frame);
+    camZoom(frame, shield, null);
+
+    var player = null, dead = false, lastMove = Date.now(), lastTime = -1, playing = false;
+    setFeed("connecting");
+
+    var reload = function () {
+      if (dead) return;
+      playing = false;
+      setFeed("retrying");
+      lastMove = Date.now();
+      iframe.src = src;
+    };
+
+    withYouTubeApi(function () {
+      if (dead) return;
+      player = new window.YT.Player(iframe, {
+        events: {
+          onReady: function (e) { e.target.mute(); e.target.playVideo(); },
+          onError: function () { setTimeout(reload, 15000); }
+        }
+      });
+    });
+
+    var watchdog = setInterval(function () {
+      if (dead || document.hidden || !player || !player.getCurrentTime) return;
+      var t = player.getCurrentTime();
+      if (t && t !== lastTime) {
+        lastTime = t;
+        lastMove = Date.now();
+        if (!playing) { playing = true; setFeed("playing"); }
+      } else if (Date.now() - lastMove > (playing ? 20000 : 45000)) {
+        reload();
+      } else if (!playing && player.playVideo) {
+        // a tab opened in the background never autoplays: nudge it
+        player.mute();
+        player.playVideo();
+      }
+    }, 2000);
+
+    var nudge = function () { if (player && player.playVideo) { player.mute(); player.playVideo(); } };
+    shield.addEventListener("click", nudge);
+    var onVisible = function () { if (!document.hidden) nudge(); };
+    document.addEventListener("visibilitychange", onVisible);
+
+    return {
+      destroy: function () {
+        dead = true;
+        clearInterval(watchdog);
+        document.removeEventListener("visibilitychange", onVisible);
+        try { if (player && player.destroy) player.destroy(); } catch (e) {}
+        var band = $(".window");
+        if (band) band.removeAttribute("data-feed");
+      }
+    };
   }
 
   function camVideo() {
@@ -415,7 +507,7 @@
     var v = camVideo();
     frame.appendChild(v);
     camMarks(w, frame);
-    camZoom(frame, v);
+    camZoom(frame, v, v);
 
     var modes = [];
     if (w.webrtcUrl && window.RTCPeerConnection && window.fetch) modes.push("webrtc");
@@ -658,12 +750,9 @@
     }
 
     var w = S.webcam || {};
-    var params = "autoplay=1&mute=1&playsinline=1&rel=0";
     switch ((w.provider || "").toLowerCase()) {
       case "youtube":
-        frame.appendChild(camIframe(w.youtubeChannelId
-          ? "https://www.youtube.com/embed/live_stream?channel=" + encodeURIComponent(w.youtubeChannelId) + "&" + params
-          : "https://www.youtube.com/embed/" + encodeURIComponent(w.youtubeVideoId) + "?" + params));
+        camFeed = camYouTube(w, frame);
         break;
       case "iframe":
         frame.appendChild(camIframe(w.iframeUrl));

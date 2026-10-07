@@ -285,6 +285,14 @@ h1, h2, h3 {
   .window__media.is-filled .window__marks-rule + .window__mark { height: 80px; }
 }
 
+/* over the YouTube player: catches every click so nothing opens youtube.com */
+.window__media > .window__shield {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  cursor: default;
+}
+
 /* the main button under the picture while the cam is live */
 .window__follow { margin-top: var(--s4); }
 .window__follow[hidden] { display: none; }
