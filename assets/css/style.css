@@ -289,6 +289,18 @@ h1, h2, h3 {
   box-shadow: 0 0 0 100vmax #000;
 }
 .window__media.is-filled > .window__photo { object-fit: contain; }
+/* the player gets exactly the 16:9 picture, centred by us: iPhone Safari
+   otherwise lets YouTube push the picture sideways inside a wider player */
+@supports (width: 1cqw) {
+  .window__media.is-filled > #cam-yt {
+    inset: auto;
+    top: 50%;
+    left: 50%;
+    width: min(100cqw, 100cqh * 16 / 9);
+    height: min(100cqh, 100cqw * 9 / 16);
+    transform: translate(-50%, -50%);
+  }
+}
 .window__media.is-filled > video { object-fit: contain; }
 
 /* in full screen the picture is letterboxed: keep the logos inside the
