@@ -359,21 +359,37 @@
     btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
     frame.appendChild(btn);
 
+    // iPhone Safari has the function but refuses anything that is not a bare
+    // video, so only trust native full screen where the browser says it works
     var native = frame.requestFullscreen || frame.webkitRequestFullscreen;
+    var canNative = !!native && !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
     var current = function () { return document.fullscreenElement || document.webkitFullscreenElement; };
+    var fill = function (on) {
+      frame.classList.toggle("is-filled", on);
+      document.documentElement.classList.toggle("u-locked", on);
+    };
     var toggle = function () {
-      if (native) {
+      if (canNative) {
         if (current()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
         else native.call(frame);
       } else {
-        var on = !frame.classList.contains("is-filled");
-        frame.classList.toggle("is-filled", on);
-        document.documentElement.classList.toggle("u-locked", on);
+        fill(!frame.classList.contains("is-filled"));
       }
     };
     btn.addEventListener("click", toggle);
     surface.addEventListener("dblclick", toggle);
     if (video) video.addEventListener("click", function () { if (video.paused) playVideo(video); });
+
+    // a phone turned sideways means "show me the cam": fill the screen, and
+    // give the page back when it turns upright again
+    var sideways = window.matchMedia &&
+      window.matchMedia("(orientation: landscape) and (max-height: 540px) and (pointer: coarse)");
+    if (sideways) {
+      var onTurn = function () { if (!current()) fill(sideways.matches); };
+      onTurn();
+      if (sideways.addEventListener) sideways.addEventListener("change", onTurn);
+      else if (sideways.addListener) sideways.addListener(onTurn);
+    }
   }
 
   /* The YouTube live, dressed like our own player: no YouTube controls,

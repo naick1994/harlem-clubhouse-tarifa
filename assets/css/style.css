@@ -275,9 +275,14 @@ h1, h2, h3 {
   position: fixed;
   inset: 0;
   z-index: 100;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-height: none;
   aspect-ratio: auto;
   background: #000;
 }
+.window__media.is-filled > .window__photo { object-fit: contain; }
 .window__media.is-filled > video { object-fit: contain; }
 
 /* in full screen the picture is letterboxed: keep the logos inside the
