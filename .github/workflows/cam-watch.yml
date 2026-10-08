@@ -1,0 +1,61 @@
+# Every 30 minutes: is the Balneario cam live on YouTube, and can the site embed it?
+# A failed run makes GitHub email the repo owner. Nothing to configure, no secrets.
+name: Cam watch
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: assets/js/config.js
+          sparse-checkout-cone-mode: false
+
+      - name: Check the YouTube live
+        run: |
+          set -u
+          id=$(grep -o 'youtubeVideoId: *"[^"]*"' assets/js/config.js | sed 's/.*"\(.*\)"/\1/')
+          [ "$(grep -o 'provider: *"[a-z]*"' assets/js/config.js | head -1)" = 'provider: "youtube"' ] \
+            || { echo "Cam provider is not youtube, nothing to watch."; exit 0; }
+          [ -n "$id" ] || { echo "::error::No youtubeVideoId in config.js"; exit 1; }
+          echo "Watching https://www.youtube.com/watch?v=$id"
+
+          # YouTube sometimes answers datacenter IPs with a consent or bot page.
+          # Only a page that really describes the video counts as an answer.
+          live=""
+          for try in 1 2 3; do
+            page=$(curl -s -A "Mozilla/5.0" -H "Accept-Language: en" -b "SOCS=CAI; CONSENT=YES+" \
+              "https://www.youtube.com/watch?v=$id")
+            if echo "$page" | grep -q '"videoId":"'"$id"'"'; then
+              echo "$page" | grep -q '"isLiveNow":true' && live=yes || live=no
+              break
+            fi
+            sleep 20
+          done
+
+          if [ -z "$live" ]; then
+            echo "::warning::YouTube did not answer properly, skipping this round."
+            exit 0
+          fi
+          if [ "$live" = no ]; then
+            echo "::error::The cam is OFFLINE. The live $id is not streaming. Check power and wifi at Balneario. If YouTube ended the live, the site needs the new video id."
+            exit 1
+          fi
+
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=$id&format=json")
+          if [ "$code" = 401 ] || [ "$code" = 403 ]; then
+            echo "::error::The cam is live but YouTube blocks embedding, the site shows Offline. Tick 'Consenti incorporamento' on video $id in YouTube Studio."
+            exit 1
+          fi
+
+          echo "Cam is live and embeddable."
