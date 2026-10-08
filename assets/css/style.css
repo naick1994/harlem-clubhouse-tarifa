@@ -310,12 +310,14 @@ h1, h2, h3 {
     height: min(100cqh, 100cqw * 9 / 16);
     transform: translate(-50%, -50%);
     padding: 18px 22px;
-    align-items: flex-start;
+    /* one row at the top of the picture, the logos centred on each other */
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: center;
     justify-content: flex-start;
     filter: none;
   }
   .window__media.is-filled > .window__marks > * { filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45)); }
-  .window__media.is-filled > .window__marks > .window__marks-rule { margin-top: 4px; }
 }
 .window__media.is-filled > video { object-fit: contain; }
 
