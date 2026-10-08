@@ -364,9 +364,13 @@
     var native = frame.requestFullscreen || frame.webkitRequestFullscreen;
     var canNative = !!native && !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
     var current = function () { return document.fullscreenElement || document.webkitFullscreenElement; };
+    var theme = document.querySelector('meta[name="theme-color"]');
+    var themeColor = theme ? theme.getAttribute("content") : "";
     var fill = function (on) {
       frame.classList.toggle("is-filled", on);
       document.documentElement.classList.toggle("u-locked", on);
+      // the browser bar goes black with the picture, back to the brand after
+      if (theme) theme.setAttribute("content", on ? "#000000" : themeColor);
     };
     var toggle = function () {
       if (canNative) {
