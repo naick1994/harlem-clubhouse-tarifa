@@ -348,6 +348,13 @@
       box.appendChild(img);
     });
     frame.appendChild(box);
+
+    // who made the cam, small in the corner so it travels with screenshots
+    var credit = node("a", "window__credit", text("webcam.credit"));
+    credit.href = "https://naick1994.github.io/about-nick/about-nick";
+    credit.target = "_blank";
+    credit.rel = "noopener";
+    frame.appendChild(credit);
   }
 
   /* Full screen takes the whole window with it, logos included. Where the
