@@ -35,7 +35,9 @@ jobs:
           for try in 1 2 3; do
             page=$(curl -s -A "Mozilla/5.0" -H "Accept-Language: en" -b "SOCS=CAI; CONSENT=YES+" \
               "https://www.youtube.com/watch?v=$id")
-            if echo "$page" | grep -q '"videoId":"'"$id"'"'; then
+            status=$(echo "$page" | grep -o '"playabilityStatus":{"status":"[A-Z_]*"' | head -1 | sed 's/.*"\([A-Z_]*\)"$/\1/')
+            echo "Try $try: YouTube says ${status:-nothing}"
+            if [ "$status" = OK ]; then
               echo "$page" | grep -q '"isLiveNow":true' && live=yes || live=no
               break
             fi
