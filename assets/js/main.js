@@ -684,12 +684,13 @@
   }
 
   /* While the cam is live the message over the window is gone, so the main
-     button sits under the picture instead. */
+     button sits under the picture instead. Instagram already lives in the
+     header, so it only comes back here once the button points at WhatsApp. */
   function renderFollow(state) {
     var row = $("#cam-follow");
     if (!row) return;
     clear(row);
-    if (state !== "live") { row.hidden = true; return; }
+    if (state !== "live" || ctaTarget() === "instagram") { row.hidden = true; return; }
     row.appendChild(ctaLink("button"));
     row.hidden = false;
   }

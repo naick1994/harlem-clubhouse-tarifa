@@ -69,9 +69,9 @@ window.SITE = {
      falls back to hlsUrl, and shows the head count from viewersUrl.
      None of these addresses carry the cam password, they are public. */
   webcam: {
-    provider: "none",                                     // set to "hls" once the relay on cam.clubhousetarifa.com is up
-    youtubeChannelId: "",        // preferred for YouTube: survives stream restarts
-    youtubeVideoId: "",          // alternative to the channel id
+    provider: "youtube",                                   // set to "hls" once the relay on cam.clubhousetarifa.com is up
+    youtubeChannelId: "",                              // preferred for YouTube: survives stream restarts
+    youtubeVideoId: "Ewa_AsnjHIM",   // alternative to the channel id
     iframeUrl: "",               // generic embed url from a webcam service
     hlsUrl: "https://cam.clubhousetarifa.com/live/balneario/index.m3u8",   // .m3u8 stream
     webrtcUrl: "https://cam.clubhousetarifa.com/live/balneario/whep",         // WHEP address, under a second of delay

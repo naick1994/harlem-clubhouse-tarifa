@@ -101,6 +101,31 @@ h1, h2, h3 {
 
 .logo-text { font-weight: 800; font-size: 15px; text-transform: uppercase; }
 
+/* Instagram, quiet, on the right of the header */
+.masthead__social {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
+  padding: 0 var(--s2);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.masthead__social:hover { color: var(--accent); }
+.masthead__social:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--radius); }
+.masthead__social[data-unset] { display: none; }
+.masthead__social-icon { flex: none; }
+.masthead__social-label { display: none; }
+@media (min-width: 600px) { .masthead__social-label { display: inline; } }
+
 @media (min-width: 900px) {
   .masthead { padding: 20px 0; }
   .masthead__logo { height: 28px; }
