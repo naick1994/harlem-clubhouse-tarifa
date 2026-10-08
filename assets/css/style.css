@@ -377,6 +377,8 @@ h1, h2, h3 {
   transition: opacity 0.4s ease;
 }
 .window[data-feed="playing"] .window__media > #cam-yt { opacity: 1; }
+/* once the live plays the photograph goes, or it peeks out around the video */
+.window[data-feed="playing"] .window__media > .window__photo { visibility: hidden; }
 
 .window__media > .window__down {
   position: absolute;
