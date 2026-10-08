@@ -24,7 +24,7 @@ jobs:
         run: |
           set -u
           id=$(grep -o 'youtubeVideoId: *"[^"]*"' assets/js/config.js | sed 's/.*"\(.*\)"/\1/')
-          [ "$(grep -o 'provider: *"[a-z]*"' assets/js/config.js | head -1)" = 'provider: "youtube"' ] \
+          grep -q '^ *provider: *"youtube",' assets/js/config.js \
             || { echo "Cam provider is not youtube, nothing to watch."; exit 0; }
           [ -n "$id" ] || { echo "::error::No youtubeVideoId in config.js"; exit 1; }
           echo "Watching https://www.youtube.com/watch?v=$id"
