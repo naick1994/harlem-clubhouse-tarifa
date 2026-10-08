@@ -406,6 +406,11 @@
     var poster = camPoster();
     if (poster) frame.appendChild(poster);
     frame.appendChild(node("p", "window__down", text("webcam.downText")));
+    var loading = node("div", "window__loading");
+    loading.setAttribute("role", "status");
+    loading.appendChild(node("span", "window__spinner"));
+    loading.appendChild(node("span", "window__loading-text", text("webcam.loadingText")));
+    frame.appendChild(loading);
 
     var iframe = camIframe(src);
     iframe.id = "cam-yt";

@@ -21,6 +21,8 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Check the YouTube live
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: |
           set -u
           id=$(grep -o 'youtubeVideoId: *"[^"]*"' assets/js/config.js | sed 's/.*"\(.*\)"/\1/')
@@ -29,24 +31,33 @@ jobs:
           [ -n "$id" ] || { echo "::error::No youtubeVideoId in config.js"; exit 1; }
           echo "Watching https://www.youtube.com/watch?v=$id"
 
-          # YouTube sometimes answers datacenter IPs with a consent or bot page.
-          # Only a page that really describes the video counts as an answer.
+          # The official YouTube Data API: YouTube blocks GitHub's servers on the
+          # normal watch page, but the API answers. The key lives in the repo
+          # secret YT_API_KEY (Settings > Secrets and variables > Actions).
+          if [ -z "${YT_API_KEY:-}" ]; then
+            echo "::warning::No YT_API_KEY secret yet, the cam watch cannot check YouTube."
+            exit 0
+          fi
           live=""
           for try in 1 2 3; do
-            page=$(curl -s -A "Mozilla/5.0" -H "Accept-Language: en" -b "SOCS=CAI; CONSENT=YES+" \
-              "https://www.youtube.com/watch?v=$id")
-            status=$(echo "$page" | grep -o '"playabilityStatus":{"status":"[A-Z_]*"' | head -1 | sed 's/.*"\([A-Z_]*\)"$/\1/')
-            echo "Try $try: YouTube says ${status:-nothing}"
-            if [ "$status" = OK ]; then
-              echo "$page" | grep -q '"isLiveNow":true' && live=yes || live=no
+            answer=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=$id&key=$YT_API_KEY")
+            state=$(echo "$answer" | grep -o '"liveBroadcastContent": *"[a-z]*"' | head -1 | sed 's/.*"\([a-z]*\)"$/\1/')
+            echo "Try $try: YouTube says ${state:-no answer}"
+            if [ -n "$state" ]; then
+              [ "$state" = live ] && live=yes || live=no
               break
             fi
+            if echo "$answer" | grep -q '"items": *\[\]'; then live=gone; break; fi
             sleep 20
           done
 
           if [ -z "$live" ]; then
-            echo "::warning::YouTube did not answer properly, skipping this round."
+            echo "::warning::YouTube API did not answer, skipping this round."
             exit 0
+          fi
+          if [ "$live" = gone ]; then
+            echo "::error::The live $id does not exist any more. YouTube made a new one: put its video id in config.js."
+            exit 1
           fi
           if [ "$live" = no ]; then
             echo "::error::The cam is OFFLINE. The live $id is not streaming. Check power and wifi at Balneario. If YouTube ended the live, the site needs the new video id."

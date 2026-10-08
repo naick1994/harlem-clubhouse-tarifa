@@ -279,6 +279,7 @@ window.SITE = {
       statusRetrying: "Reconnecting",
       statusDown: "Offline",
       downText: "The cam is offline. Back soon.",
+      loadingText: "Loading the live",
       viewersOne: "1 watching",
       viewersMany: "{n} watching",
       fullscreen: "Full screen",
