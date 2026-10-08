@@ -280,7 +280,6 @@ window.SITE = {
       statusDown: "Offline",
       downText: "The cam is offline. Back soon.",
       loadingText: "Loading the live",
-      credit: "Cam by Nicholas Baruffaldi",
       viewersOne: "1 watching",
       viewersMany: "{n} watching",
       fullscreen: "Full screen",
