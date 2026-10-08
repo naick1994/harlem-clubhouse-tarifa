@@ -71,7 +71,7 @@ window.SITE = {
   webcam: {
     provider: "youtube",                                   // set to "hls" once the relay on cam.clubhousetarifa.com is up
     youtubeChannelId: "",                              // preferred for YouTube: survives stream restarts
-    youtubeVideoId: "Ewa_AsnjHIM",   // alternative to the channel id
+    youtubeVideoId: "QqzfEnuAec4",   // alternative to the channel id
     iframeUrl: "",               // generic embed url from a webcam service
     hlsUrl: "https://cam.clubhousetarifa.com/live/balneario/index.m3u8",   // .m3u8 stream
     webrtcUrl: "https://cam.clubhousetarifa.com/live/balneario/whep",         // WHEP address, under a second of delay
@@ -277,6 +277,8 @@ window.SITE = {
       statusSleeping: "Sleeping",
       statusConnecting: "Connecting",
       statusRetrying: "Reconnecting",
+      statusDown: "Offline",
+      downText: "The cam is offline. Back soon.",
       viewersOne: "1 watching",
       viewersMany: "{n} watching",
       fullscreen: "Full screen",

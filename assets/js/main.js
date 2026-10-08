@@ -402,6 +402,11 @@
       ? "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(w.youtubeVideoId) + "?" + params
       : "https://www.youtube-nocookie.com/embed/live_stream?channel=" + encodeURIComponent(w.youtubeChannelId) + "&" + params;
 
+    // the photograph waits under the player and shows whenever the live is not moving
+    var poster = camPoster();
+    if (poster) frame.appendChild(poster);
+    frame.appendChild(node("p", "window__down", text("webcam.downText")));
+
     var iframe = camIframe(src);
     iframe.id = "cam-yt";
     iframe.setAttribute("tabindex", "-1");
@@ -415,12 +420,21 @@
     camZoom(frame, shield, null);
 
     var player = null, dead = false, lastMove = Date.now(), lastTime = -1, playing = false;
+    var lastPlay = Date.now(), down = false;
     setFeed("connecting");
+
+    // no picture for 30 seconds: say so and keep the photograph up while we retry
+    var goDown = function () {
+      if (dead || down) return;
+      down = true;
+      playing = false;
+      setFeed("down");
+    };
 
     var reload = function () {
       if (dead) return;
       playing = false;
-      setFeed("retrying");
+      setFeed(down ? "down" : "retrying");
       lastMove = Date.now();
       iframe.src = src;
     };
@@ -430,7 +444,7 @@
       player = new window.YT.Player(iframe, {
         events: {
           onReady: function (e) { e.target.mute(); e.target.playVideo(); },
-          onError: function () { setTimeout(reload, 15000); }
+          onError: function () { goDown(); setTimeout(reload, 15000); }
         }
       });
     });
@@ -440,8 +454,11 @@
       var t = player.getCurrentTime();
       if (t && t !== lastTime) {
         lastTime = t;
-        lastMove = Date.now();
+        lastMove = lastPlay = Date.now();
+        down = false;
         if (!playing) { playing = true; setFeed("playing"); }
+      } else if (Date.now() - lastPlay > 30000 && !down) {
+        goDown();
       } else if (Date.now() - lastMove > (playing ? 20000 : 45000)) {
         reload();
       } else if (!playing && player.playVideo) {
@@ -494,7 +511,7 @@
      tears itself down and tries again, waiting a little longer each time.
      A hidden tab lets go of the stream and picks it up at the live edge
      when it comes back. */
-  var FEED = { connecting: "webcam.statusConnecting", playing: "webcam.statusLive", retrying: "webcam.statusRetrying" };
+  var FEED = { connecting: "webcam.statusConnecting", playing: "webcam.statusLive", retrying: "webcam.statusRetrying", down: "webcam.statusDown" };
 
   function setFeed(state) {
     var band = $(".window");

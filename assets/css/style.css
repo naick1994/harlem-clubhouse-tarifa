@@ -318,6 +318,45 @@ h1, h2, h3 {
   cursor: default;
 }
 
+/* YouTube: the player only shows once frames move, the photograph stays
+   underneath for connecting, reconnecting and offline */
+.window__media > #cam-yt {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.window[data-feed="playing"] .window__media > #cam-yt { opacity: 1; }
+
+.window__media > .window__down {
+  position: absolute;
+  left: var(--s4);
+  bottom: var(--s4);
+  z-index: 1;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  background: rgba(6, 23, 28, 0.72);
+  color: var(--surface);
+  font-size: 13px;
+  font-weight: 700;
+  display: none;
+}
+.window[data-feed="down"] .window__media > .window__down { display: block; }
+
+.window[data-feed="down"] .window__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #06171C;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.window[data-cam="live"][data-feed="down"] .window__dot { background: #5C6764; animation: none; }
+
 /* the main button under the picture while the cam is live */
 .window__follow { margin-top: var(--s4); }
 .window__follow[hidden] { display: none; }
