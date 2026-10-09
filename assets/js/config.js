@@ -271,6 +271,13 @@ window.SITE = {
       logoFallback: "HARLEM CLUBHOUSE TARIFA",
       instagram: "Instagram"
     },
+    notice: {
+      title: "Expert riders only",
+      short: "Demanding spot. Know your level, give pros priority.",
+      text1: "This is a demanding spot for experienced riders. Make sure your level is appropriate for the conditions before entering the water.",
+      text2: "Please respect professional riders who are training or working on the spot, and give them priority when needed.",
+      text3: "Ride safe. Respect the spot and the local community."
+    },
     webcam: {
       statusLive: "Live",
       statusSoon: "Coming soon",
