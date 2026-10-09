@@ -276,7 +276,7 @@ window.SITE = {
       short: "Offshore wind, no rescue service. Know your level.",
       text1: "This is a demanding spot for experienced riders. With Levante the wind is offshore and there is no rescue service: if you get in trouble, the wind takes you out to sea. Make sure your level is appropriate for the conditions and for the spot before entering the water.",
       text2: "Please follow the spot's riding rules. Respect professional riders who are training on the spot, and give them priority when needed.",
-      text4: "We look out for each other. If you go out on the water, please make sure you can assist with kite and rider rescue if needed. Safety is a shared responsibility.",
+      text4: "We rescue each other. If you can't provide kite, board and rider rescue, this is not your spot.",
       text3: "Ride safe. Respect the spot and the local community."
     },
     webcam: {
