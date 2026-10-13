@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>VIP Replay | Harlem Clubhouse Tarifa</title>
+<meta name="theme-color" content="#0B2B33">
+<link rel="icon" href="../assets/img/favicon.png" sizes="32x32">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/vip.css?v=1">
+<script src="../assets/js/config.js?v=39" defer></script>
+<script src="../assets/js/vip.js?v=1" defer></script>
+</head>
+<body>
+
+<header class="vip-top">
+  <a class="vip-top__brand" href="/" aria-label="Harlem Clubhouse Tarifa">
+    <img src="../assets/img/logo-clubhouse-white.png" width="680" height="187" alt="Harlem Clubhouse Tarifa">
+  </a>
+  <span class="vip-top__rule" aria-hidden="true"></span>
+  <img class="vip-top__venue" src="../assets/img/logo-balneario-white.png" alt="Balneario Beach Club Tarifa">
+  <span class="vip-top__tag">VIP Replay</span>
+</header>
+
+<main class="vip">
+
+  <!-- the gate: one code, shared with the crew -->
+  <form class="gate" id="gate" autocomplete="off">
+    <h1 class="gate__title">Balneario replay</h1>
+    <p class="gate__text">Go back up to 12 hours on the live cam. Enter the crew code.</p>
+    <div class="gate__row">
+      <input class="gate__input" id="gate-code" type="password" inputmode="text" autocapitalize="off"
+             spellcheck="false" placeholder="Crew code" aria-label="Crew code" required>
+      <button class="gate__go" type="submit">Enter</button>
+    </div>
+    <p class="gate__error" id="gate-error" role="alert" hidden>That code is not right.</p>
+  </form>
+
+  <!-- the replay -->
+  <section class="replay" id="replay" hidden aria-label="Replay of the Balneario live cam">
+    <div class="replay__bar">
+      <p class="replay__clock"><span id="clock">--:--:--</span> <span class="replay__tz">Tarifa</span></p>
+      <p class="replay__lag" id="lag"></p>
+    </div>
+
+    <div class="screen" id="screen">
+      <div id="yt"></div>
+      <div class="screen__shield" id="shield" aria-hidden="true"></div>
+      <div class="screen__marks" aria-hidden="true">
+        <img src="../assets/img/logo-clubhouse-white.png" alt="">
+        <span></span>
+        <img class="screen__venue" src="../assets/img/logo-balneario-white.png" alt="">
+      </div>
+      <div class="screen__wait" id="wait"><span class="screen__spin"></span>Loading the live</div>
+    </div>
+
+    <div class="scrub">
+      <input class="scrub__range" id="scrub" type="range" min="0" max="1000" value="1000" step="1"
+             aria-label="Position in the last 12 hours">
+      <div class="scrub__ends"><span id="scrub-start">12h ago</span><span>Live</span></div>
+    </div>
+
+    <div class="pad">
+      <button class="pad__btn" type="button" data-jump="-300">−5 min</button>
+      <button class="pad__btn" type="button" data-jump="-30">−30 s</button>
+      <button class="pad__btn pad__btn--play" type="button" id="play" aria-label="Pause">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg>
+      </button>
+      <button class="pad__btn" type="button" data-jump="30">+30 s</button>
+      <button class="pad__btn pad__btn--live" type="button" id="golive"><span></span>Live</button>
+    </div>
+
+    <form class="jump" id="jump">
+      <label class="jump__label" for="jump-time">Go to time</label>
+      <input class="jump__input" id="jump-time" type="time" step="60">
+      <button class="jump__go" type="submit">Go</button>
+    </form>
+
+    <div class="clip">
+      <p class="clip__title">Download a clip</p>
+      <p class="clip__text">Pick a start and an end and take the video home. Coming soon.</p>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>
