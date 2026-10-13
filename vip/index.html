@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="../assets/css/vip.css?v=1">
+<link rel="stylesheet" href="../assets/css/vip.css?v=2">
 <script src="../assets/js/config.js?v=39" defer></script>
-<script src="../assets/js/vip.js?v=1" defer></script>
+<script src="../assets/js/vip.js?v=2" defer></script>
 </head>
 <body>
 
@@ -55,6 +55,20 @@
         <img class="screen__venue" src="../assets/img/logo-balneario-white.png" alt="">
       </div>
       <div class="screen__wait" id="wait"><span class="screen__spin"></span>Loading the live</div>
+      <button class="screen__zoom" type="button" id="zoom" aria-label="Full screen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      </button>
+      <!-- in full screen the controls ride on the picture -->
+      <div class="screen__pad" id="pad">
+        <span class="screen__lag" id="lag-full"></span>
+        <button class="pad__btn" type="button" data-jump="-300">−5 min</button>
+        <button class="pad__btn" type="button" data-jump="-30">−30 s</button>
+        <button class="pad__btn pad__btn--play" type="button" data-play aria-label="Pause">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg>
+        </button>
+        <button class="pad__btn" type="button" data-jump="30">+30 s</button>
+        <button class="pad__btn pad__btn--live" type="button" data-live><span></span>Live</button>
+      </div>
     </div>
 
     <div class="scrub">
@@ -66,11 +80,11 @@
     <div class="pad">
       <button class="pad__btn" type="button" data-jump="-300">−5 min</button>
       <button class="pad__btn" type="button" data-jump="-30">−30 s</button>
-      <button class="pad__btn pad__btn--play" type="button" id="play" aria-label="Pause">
+      <button class="pad__btn pad__btn--play" type="button" id="play" data-play aria-label="Pause">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-pause" d="M8 5v14M16 5v14"/><path class="i-play" d="M7 5l12 7-12 7z"/></svg>
       </button>
       <button class="pad__btn" type="button" data-jump="30">+30 s</button>
-      <button class="pad__btn pad__btn--live" type="button" id="golive"><span></span>Live</button>
+      <button class="pad__btn pad__btn--live" type="button" id="golive" data-live><span></span>Live</button>
     </div>
 
     <form class="jump" id="jump">

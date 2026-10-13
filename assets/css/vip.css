@@ -193,3 +193,84 @@ button, input { font: inherit; }
   color-scheme: dark;
 }
 .jump__go { min-height: 44px; padding: 0 16px; }
+
+/* full screen button, bottom right of the picture */
+.screen__zoom {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(6, 23, 28, 0.45);
+  color: #fff;
+  cursor: pointer;
+}
+.screen__zoom svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* full screen: an exact 16:9 picture in the middle of black */
+.is-locked, .is-locked body { overflow: hidden; background: #000; }
+.screen.is-full {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 100;
+  width: min(100vw, 100vh * 16 / 9);
+  height: min(100vh, 100vw * 9 / 16);
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border-radius: 0;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 100vmax #000;
+}
+@supports (height: 100dvh) {
+  .screen.is-full {
+    width: min(100vw, 100dvh * 16 / 9);
+    height: min(100dvh, 100vw * 9 / 16);
+  }
+}
+.screen.is-full .screen__marks img { height: 28px; }
+.screen.is-full .screen__marks .screen__venue { height: 50px; }
+
+/* the controls on the picture: only in full screen, after a tap */
+.screen__pad {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 40px 64px 14px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.screen.is-full .screen__pad { display: flex; }
+.screen.is-full.show-pad .screen__pad { opacity: 1; pointer-events: auto; }
+.screen__pad .pad__btn { background: rgba(0, 0, 0, 0.35); }
+.screen__pad .pad__btn--play { background: var(--accent); }
+.screen__lag {
+  flex-basis: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+@media (max-height: 540px) {
+  .screen__pad { padding: 24px 60px 10px; gap: 6px; }
+  .screen__pad .pad__btn { min-height: 38px; min-width: 54px; font-size: 12px; }
+  .screen__pad .pad__btn--play { width: 44px; height: 44px; }
+}

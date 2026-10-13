@@ -10,6 +10,7 @@
   var WINDOW = 12 * 3600; // seconds YouTube keeps behind the live edge
 
   var $ = function (id) { return document.getElementById(id); };
+  var all = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
   var w = (window.SITE || {}).webcam || {};
 
   function sha256(text) {
@@ -78,14 +79,17 @@
     var b = bounds(), now = player.getCurrentTime() || 0, behind = Math.max(0, b.end - now);
     $("clock").textContent = clock(new Date(Date.now() - behind * 1000));
     $("lag").textContent = lagText(behind);
-    $("golive").classList.toggle("is-live", behind < 15);
+    $("lag-full").textContent = $("clock").textContent + "  ·  " + lagText(behind);
+    all("[data-live]").forEach(function (b) { b.classList.toggle("is-live", behind < 15); });
     $("scrub-start").textContent = clock(new Date(Date.now() - (b.end - b.start) * 1000)).slice(0, 5);
     if (!dragging && b.end > b.start) {
       $("scrub").value = Math.round(((now - b.start) / (b.end - b.start)) * 1000);
     }
     var playing = player.getPlayerState && player.getPlayerState() === 1;
-    $("play").classList.toggle("is-paused", !playing);
-    $("play").setAttribute("aria-label", playing ? "Pause" : "Play");
+    all("[data-play]").forEach(function (b) {
+      b.classList.toggle("is-paused", !playing);
+      b.setAttribute("aria-label", playing ? "Pause" : "Play");
+    });
     if (playing) $("wait").hidden = true;
   }
 
@@ -120,7 +124,7 @@
   }
 
   // once the viewer moves the replay, the page stops pulling it to the live
-  Array.prototype.forEach.call(document.querySelectorAll(".scrub, .pad, .jump"), function (el) {
+  Array.prototype.forEach.call(document.querySelectorAll(".scrub, .pad, .jump, .screen__pad"), function (el) {
     el.addEventListener("pointerdown", function () { touched = true; });
     el.addEventListener("keydown", function () { touched = true; });
   });
@@ -138,13 +142,69 @@
     });
   });
 
-  $("golive").addEventListener("click", function () { if (player) seek(bounds().end); });
+  all("[data-live]").forEach(function (b) {
+    b.addEventListener("click", function () { if (player) seek(bounds().end); });
+  });
 
-  $("play").addEventListener("click", function () {
+  function togglePlay() {
     if (!player) return;
     if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo();
+  }
+  all("[data-play]").forEach(function (b) { b.addEventListener("click", togglePlay); });
+
+  /* ----------------------------------------------------- full screen
+     The picture is pinned as an exact 16:9 box in the middle of a black
+     screen, so the logos always sit on it. Where the browser allows it,
+     real full screen hides its bars too. A phone turned sideways does it
+     on its own. */
+  var screen = $("screen"), padTimer = null;
+  var isFull = function () { return screen.classList.contains("is-full"); };
+
+  function showPad() {
+    screen.classList.add("show-pad");
+    clearTimeout(padTimer);
+    padTimer = setTimeout(function () { screen.classList.remove("show-pad"); }, 3500);
+  }
+
+  function setFull(on) {
+    screen.classList.toggle("is-full", on);
+    document.documentElement.classList.toggle("is-locked", on);
+    if (on) showPad();
+  }
+
+  var root = document.documentElement;
+  var nativeIn = root.requestFullscreen || root.webkitRequestFullscreen;
+  var nativeOut = document.exitFullscreen || document.webkitExitFullscreen;
+  var nativeOn = function () { return document.fullscreenElement || document.webkitFullscreenElement; };
+
+  $("zoom").addEventListener("click", function () {
+    var on = !isFull();
+    setFull(on);
+    try {
+      if (on && nativeIn && !nativeOn()) { var r = nativeIn.call(root); if (r && r.catch) r.catch(function () {}); }
+      if (!on && nativeOn()) nativeOut.call(document);
+    } catch (e) {}
   });
-  $("shield").addEventListener("click", function () { $("play").click(); });
+  ["fullscreenchange", "webkitfullscreenchange"].forEach(function (ev) {
+    document.addEventListener(ev, function () { if (!nativeOn() && !sideways()) setFull(false); });
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && isFull()) setFull(false); });
+
+  var turn = window.matchMedia &&
+    window.matchMedia("(orientation: landscape) and (max-height: 540px) and (pointer: coarse)");
+  var sideways = function () { return !!(turn && turn.matches); };
+  if (turn) {
+    var onTurn = function () { if (!nativeOn()) setFull(sideways()); };
+    onTurn();
+    if (turn.addEventListener) turn.addEventListener("change", onTurn);
+    else if (turn.addListener) turn.addListener(onTurn);
+  }
+
+  // a tap on the picture: in full screen it brings the controls back,
+  // otherwise it plays or pauses
+  $("shield").addEventListener("click", function () { if (isFull()) showPad(); else togglePlay(); });
+  screen.addEventListener("pointermove", function () { if (isFull()) showPad(); });
+  $("pad").addEventListener("pointerdown", showPad);
 
   // "go to 16:05": how far back that is from now, in Tarifa time
   $("jump").addEventListener("submit", function (e) {
