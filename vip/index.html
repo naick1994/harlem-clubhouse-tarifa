@@ -10,9 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&display=swap">
-<link rel="stylesheet" href="../assets/css/vip.css?v=2">
+<link rel="stylesheet" href="../assets/css/vip.css?v=3">
 <script src="../assets/js/config.js?v=39" defer></script>
-<script src="../assets/js/vip.js?v=2" defer></script>
+<script src="../assets/js/vip.js?v=3" defer></script>
 </head>
 <body>
 
@@ -61,6 +61,12 @@
       <!-- in full screen the controls ride on the picture -->
       <div class="screen__pad" id="pad">
         <span class="screen__lag" id="lag-full"></span>
+        <div class="screen__scrub">
+          <span class="screen__end" data-scrub-start>12h ago</span>
+          <input class="scrub__range" type="range" min="0" max="1000" value="1000" step="1" data-scrub
+                 aria-label="Position in the last 12 hours">
+          <span class="screen__end">Live</span>
+        </div>
         <button class="pad__btn" type="button" data-jump="-300">−5 min</button>
         <button class="pad__btn" type="button" data-jump="-30">−30 s</button>
         <button class="pad__btn pad__btn--play" type="button" data-play aria-label="Pause">
@@ -72,9 +78,9 @@
     </div>
 
     <div class="scrub">
-      <input class="scrub__range" id="scrub" type="range" min="0" max="1000" value="1000" step="1"
+      <input class="scrub__range" id="scrub" data-scrub type="range" min="0" max="1000" value="1000" step="1"
              aria-label="Position in the last 12 hours">
-      <div class="scrub__ends"><span id="scrub-start">12h ago</span><span>Live</span></div>
+      <div class="scrub__ends"><span id="scrub-start" data-scrub-start>12h ago</span><span>Live</span></div>
     </div>
 
     <div class="pad">

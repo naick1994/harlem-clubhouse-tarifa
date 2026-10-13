@@ -249,7 +249,7 @@ button, input { font: inherit; }
   justify-content: center;
   gap: 8px;
   flex-wrap: wrap;
-  padding: 40px 64px 14px;
+  padding: 40px 24px 14px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
   opacity: 0;
   pointer-events: none;
@@ -259,6 +259,23 @@ button, input { font: inherit; }
 .screen.is-full.show-pad .screen__pad { opacity: 1; pointer-events: auto; }
 .screen__pad .pad__btn { background: rgba(0, 0, 0, 0.35); }
 .screen__pad .pad__btn--play { background: var(--accent); }
+.screen__scrub {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.screen__scrub .scrub__range { flex: 1; min-width: 0; }
+.screen__end {
+  flex: none;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
 .screen__lag {
   flex-basis: 100%;
   text-align: center;
@@ -270,7 +287,7 @@ button, input { font: inherit; }
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 @media (max-height: 540px) {
-  .screen__pad { padding: 24px 60px 10px; gap: 6px; }
+  .screen__pad { padding: 20px 64px 8px; gap: 6px; }
   .screen__pad .pad__btn { min-height: 38px; min-width: 54px; font-size: 12px; }
   .screen__pad .pad__btn--play { width: 44px; height: 44px; }
 }

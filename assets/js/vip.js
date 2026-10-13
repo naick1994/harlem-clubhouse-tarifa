@@ -81,9 +81,11 @@
     $("lag").textContent = lagText(behind);
     $("lag-full").textContent = $("clock").textContent + "  ·  " + lagText(behind);
     all("[data-live]").forEach(function (b) { b.classList.toggle("is-live", behind < 15); });
-    $("scrub-start").textContent = clock(new Date(Date.now() - (b.end - b.start) * 1000)).slice(0, 5);
+    var from = clock(new Date(Date.now() - (b.end - b.start) * 1000)).slice(0, 5);
+    all("[data-scrub-start]").forEach(function (el) { el.textContent = from; });
     if (!dragging && b.end > b.start) {
-      $("scrub").value = Math.round(((now - b.start) / (b.end - b.start)) * 1000);
+      var pos = Math.round(((now - b.start) / (b.end - b.start)) * 1000);
+      all("[data-scrub]").forEach(function (el) { el.value = pos; });
     }
     var playing = player.getPlayerState && player.getPlayerState() === 1;
     all("[data-play]").forEach(function (b) {
@@ -129,11 +131,13 @@
     el.addEventListener("keydown", function () { touched = true; });
   });
 
-  $("scrub").addEventListener("input", function () { dragging = true; });
-  $("scrub").addEventListener("change", function () {
-    dragging = false;
-    var b = bounds();
-    seek(b.start + (this.value / 1000) * (b.end - b.start));
+  all("[data-scrub]").forEach(function (el) {
+    el.addEventListener("input", function () { dragging = true; showPad(); });
+    el.addEventListener("change", function () {
+      dragging = false;
+      var b = bounds();
+      seek(b.start + (this.value / 1000) * (b.end - b.start));
+    });
   });
 
   Array.prototype.forEach.call(document.querySelectorAll("[data-jump]"), function (btn) {
