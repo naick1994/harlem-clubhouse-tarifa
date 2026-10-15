@@ -16,7 +16,6 @@ import secrets
 import subprocess
 import sys
 import urllib.parse
-import urllib.request
 import webbrowser
 
 SCOPE = "https://www.googleapis.com/auth/youtube.force-ssl"
@@ -66,8 +65,12 @@ def main():
         "code": got["code"], "client_id": client_id, "client_secret": client_secret,
         "redirect_uri": redirect, "grant_type": "authorization_code",
     }).encode()
-    with urllib.request.urlopen("https://oauth2.googleapis.com/token", data=data) as r:
-        tokens = json.loads(r.read())
+    # the Mac's curl, not urllib: a python.org Python often has no
+    # certificates installed. The form goes in on stdin, never on the
+    # command line, so the secret does not show up in the process list.
+    out = subprocess.run(["curl", "-s", "--data-binary", "@-", "https://oauth2.googleapis.com/token"],
+                         input=data, capture_output=True, check=True)
+    tokens = json.loads(out.stdout)
     if "refresh_token" not in tokens:
         sys.exit("Google gave no refresh token. Run the script again.")
 
