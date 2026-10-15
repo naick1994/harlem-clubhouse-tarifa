@@ -167,7 +167,15 @@ def main():
         return 0
 
     token = access_token()
-    b = current_broadcast(token)
+    try:
+        b = current_broadcast(token)
+    except RuntimeError as e:
+        mine = call("GET", f"{API}/channels?part=snippet&mine=true", token).get("items", [])
+        who = mine[0]["snippet"]["title"] if mine else "no channel"
+        error(f"YouTube refused the live list for the authorised channel '{who}'. "
+              "Run tools/yt-auth.py again and pick the Harlem Clubhouse Tarifa channel. "
+              f"Details: {e}")
+        return 1
     if not b:
         error("The cam is OFFLINE: the channel has no live and none getting ready. Check power and wifi at Balneario.")
         return 1
