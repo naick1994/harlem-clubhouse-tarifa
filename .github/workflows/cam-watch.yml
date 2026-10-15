@@ -1,5 +1,5 @@
-# Every 30 minutes: is the Balneario cam live on YouTube, and can the site embed it?
-# A failed run makes GitHub email the repo owner. Nothing to configure, no secrets.
+# Every 30 minutes: keep the Balneario cam on the site and set up right.
+# A failed run makes GitHub email the repo owner. See .github/scripts/cam_watch.py.
 name: Cam watch
 
 on:
@@ -8,7 +8,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: cam-watch
 
 jobs:
   check:
@@ -16,59 +19,11 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-        with:
-          sparse-checkout: assets/js/config.js
-          sparse-checkout-cone-mode: false
 
-      - name: Check the YouTube live
+      - name: Check and fix the YouTube live
         env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
-        run: |
-          set -u
-          id=$(grep -o 'youtubeVideoId: *"[^"]*"' assets/js/config.js | sed 's/.*"\(.*\)"/\1/')
-          grep -q '^ *provider: *"youtube",' assets/js/config.js \
-            || { echo "Cam provider is not youtube, nothing to watch."; exit 0; }
-          [ -n "$id" ] || { echo "::error::No youtubeVideoId in config.js"; exit 1; }
-          echo "Watching https://www.youtube.com/watch?v=$id"
-
-          # The official YouTube Data API: YouTube blocks GitHub's servers on the
-          # normal watch page, but the API answers. The key lives in the repo
-          # secret YT_API_KEY (Settings > Secrets and variables > Actions).
-          if [ -z "${YT_API_KEY:-}" ]; then
-            echo "::warning::No YT_API_KEY secret yet, the cam watch cannot check YouTube."
-            exit 0
-          fi
-          live=""
-          for try in 1 2 3; do
-            answer=$(curl -s "https://www.googleapis.com/youtube/v3/videos?part=snippet&id=$id&key=$YT_API_KEY")
-            state=$(echo "$answer" | grep -o '"liveBroadcastContent": *"[a-z]*"' | head -1 | sed 's/.*"\([a-z]*\)"$/\1/')
-            echo "Try $try: YouTube says ${state:-no answer}"
-            if [ -n "$state" ]; then
-              [ "$state" = live ] && live=yes || live=no
-              break
-            fi
-            if echo "$answer" | grep -q '"items": *\[\]'; then live=gone; break; fi
-            sleep 20
-          done
-
-          if [ -z "$live" ]; then
-            echo "::warning::YouTube API did not answer, skipping this round."
-            exit 0
-          fi
-          if [ "$live" = gone ]; then
-            echo "::error::The live $id does not exist any more. YouTube made a new one: put its video id in config.js."
-            exit 1
-          fi
-          if [ "$live" = no ]; then
-            echo "::error::The cam is OFFLINE. The live $id is not streaming. Check power and wifi at Balneario. If YouTube ended the live, the site needs the new video id."
-            exit 1
-          fi
-
-          code=$(curl -s -o /dev/null -w "%{http_code}" \
-            "https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=$id&format=json")
-          if [ "$code" = 401 ] || [ "$code" = 403 ]; then
-            echo "::error::The cam is live but YouTube blocks embedding, the site shows Offline. Tick 'Consenti incorporamento' on video $id in YouTube Studio."
-            exit 1
-          fi
-
-          echo "Cam is live and embeddable."
+        run: python3 .github/scripts/cam_watch.py
