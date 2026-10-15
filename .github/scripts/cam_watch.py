@@ -160,7 +160,10 @@ def check_only(key):
 
 
 def main():
-    if not all(os.environ.get(k) for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN")):
+    # channel access is optional: without it (or with the wrong channel)
+    # the watch only checks the live named in config.js, with the API key
+    if os.environ.get("CAM_WATCH_MANAGE") != "1" or \
+            not all(os.environ.get(k) for k in ("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN")):
         if os.environ.get("YT_API_KEY"):
             return check_only(os.environ["YT_API_KEY"])
         warn("No YouTube secrets, the cam watch cannot reach YouTube.")
