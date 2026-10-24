@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /vip/
+Disallow: /design/
+Disallow: /brand/
+Disallow: /tools/
+
+Sitemap: https://harlem.clubhousetarifa.com/sitemap.xml
