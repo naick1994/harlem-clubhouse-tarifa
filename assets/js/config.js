@@ -291,7 +291,7 @@ window.SITE = {
       viewersOne: "1 watching",
       viewersMany: "{n} watching",
       fullscreen: "Full screen",
-      frameTitle: "Live webcam, Balneario Beach Club, Tarifa",
+      frameTitle: "Webcam Balneario Tarifa en directo. Live webcam, Balneario Beach Club",
       soonTitle: "Live cam coming soon.",
       soonText: "Join the family and be the first to know when it's live.",
       offlineTitle: "The cam is sleeping.",

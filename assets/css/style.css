@@ -1029,3 +1029,5 @@ h1, h2, h3 {
 .legal__h { font-size: 18px; margin-top: var(--s6); margin-bottom: var(--s2); }
 .legal p { color: var(--mute); margin-bottom: var(--s3); max-width: 62ch; }
 .legal__back { margin-top: var(--s7); }
+
+.footer__about { font-size: 13px; margin-top: var(--s2); }
