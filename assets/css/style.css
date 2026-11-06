@@ -1030,4 +1030,11 @@ h1, h2, h3 {
 .legal p { color: var(--mute); margin-bottom: var(--s3); max-width: 62ch; }
 .legal__back { margin-top: var(--s7); }
 
-.footer__about { font-size: 13px; margin-top: var(--s2); }
+
+/* about the cam: plain words for people and for search */
+.about { padding: var(--s7) 0; }
+.about__title { margin: 0 0 var(--s4); font-size: 28px; }
+.about__cols { display: grid; gap: var(--s5); }
+.about__cols p { margin: 0 0 var(--s3); color: var(--mute); max-width: 60ch; }
+.about__q { margin: var(--s4) 0 var(--s1); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+@media (min-width: 800px) { .about__cols { grid-template-columns: 1fr 1fr; } }

@@ -1204,6 +1204,33 @@
     });
   }
 
+  /* ----------------------------------------------------- search
+     Tell search engines the cam is a live broadcast, with the id in
+     config.js, so the live badge can show next to the result. */
+
+  function renderLiveData() {
+    var w = S.webcam || {};
+    if (!w.youtubeVideoId) return;
+    var data = {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      name: "Webcam Balneario Tarifa en directo",
+      description: "Webcam del Balneario de Tarifa en directo desde Balneario Beach Club. Live webcam, Tarifa.",
+      thumbnailUrl: [location.origin + "/assets/img/og-image.jpg"],
+      uploadDate: "2026-10-07T10:00:00+02:00",
+      embedUrl: "https://www.youtube.com/embed/" + w.youtubeVideoId,
+      publication: {
+        "@type": "BroadcastEvent",
+        isLiveBroadcast: true,
+        startDate: "2026-10-07T10:00:00+02:00"
+      }
+    };
+    var s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.textContent = JSON.stringify(data);
+    document.head.appendChild(s);
+  }
+
   /* ----------------------------------------------------- boot */
 
   function init() {
@@ -1223,6 +1250,7 @@
     renderPrivacy();
     renderFooterBrands();
     renderSponsor();
+    renderLiveData();
     initClicks();
     // the cam flips itself between live and offline without a reload
     setInterval(function () { renderCam(false); }, 60 * 1000);
